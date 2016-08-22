@@ -1,0 +1,29 @@
+% This script is to find the probability of obtaining any one of the 256
+% 8-bit binary unmbers which could constitute a changepoint configuration.
+% We define \Gamma as the 8 bit number, and \gamma_i as each bimary element
+% of \Gamma.
+
+% We can define the probability of \gamma_i as
+
+P_gamma = (1/(((2*pi)^-0.5)*sigma))*exp((-(D-gamma_i*h)^2)/(2*sigma^2));
+
+% Now we can define some other things. for example, D is fed forward from
+% the CW analysis. Sigmma may be given (look into feed forward from CW
+% analysis), h fed forward from CW analysis
+
+% We compute the probability for each of the 256 8-bit numbers
+
+bit_list = str2num(dec2bin([0:255]))
+
+for item in bin_list;
+    while length(item)>8;
+        item = cat(0, item, 1);
+        
+    end
+end
+
+
+
+end
+
+        
