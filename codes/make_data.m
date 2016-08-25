@@ -30,16 +30,17 @@ end
 
 h_val
 
-aitches = rand(size(data))*10^(-25);
+aitches = rand(size(data))*10^(-24);
 aitch_noise = rand(size(data))*10^(-26);
 
 signal_size = aitches + aitch_noise;
 for seg = 1:length(data)
-    data(seg) = (is_signal(seg) * signal_size(seg)) + noise(seg);
+    data(seg) = (is_signal(seg) * signal_size(h_val(seg)) + noise(seg));
     data(seg) = abs(data(seg));
 end
 
-
+figure
+plot(data)
 
 
 
