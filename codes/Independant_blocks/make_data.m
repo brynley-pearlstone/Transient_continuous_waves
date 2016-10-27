@@ -30,7 +30,6 @@ end
 
 aitches = h_sd;
 
-
 signal_size = aitches;
 for seg = 1:length(data)
     data(seg) = (is_signal(seg) * signal_size(h_val(seg)) + noise(seg));

@@ -29,9 +29,9 @@ for position = 2:length(signal)
 end
 
 aitches = h_sd;
+aitch_noise = rand(size(data))*10^(-26);
 
-
-signal_size = aitches;
+signal_size = aitches + aitch_noise;
 for seg = 1:length(data)
     data(seg) = (is_signal(seg) * signal_size(h_val(seg)) + noise(seg));
     data(seg) = abs(data(seg));
