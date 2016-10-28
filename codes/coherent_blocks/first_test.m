@@ -25,14 +25,15 @@ l_prior = log(1/h_sd);
 h_vals = linspace(0,h_sd,100)';
 [data, true_binary] = make_data(8, sigma, h);
 
-bin_list = dec2bin([0:2^(length(data))-1]) - '0';
+bin_list = dec2bin(0:2^(length(data))-1) - '0';
 l_likelihood =  zeros(size(bin_list,1),1);  % We would work in log-space
 is_signal = true_binary;
+l_odds = zeros(1, length(bin_list));
 
 
 for config = 1:size(bin_list,1);
     birnary_number = (bin_list(config,:)); % The binary configuration that we are considering now
-    binary_number = cat( 2, 0, birnary_number, [0,0,0]);
+    binary_number = cat( 2, birnary_number, [0,0]);
     l_likelihood(config) = log(1/(sqrt(2*pi)*sigma))^(length(data)); % Prefactor for the likelihood of any given configuration, dependant on only the length and noise of the data
     changepoints = 0; % Assume there are no changepoints in this number. To be sorted later.
 
@@ -57,21 +58,21 @@ for config = 1:size(bin_list,1);
     n_blocks = sum(block_start);
     block_length = zeros(1,n_blocks);
     block = 1;
-    itt = 2;
+    itt = 1;
     
-    while itt < length(data) +1
-        itt = itt+1;
+    while itt < length(data)
         if block_start(itt) ==1
             count = 0;
             while block_end(itt+count) ==0
                 count = count + 1;
             end
-            block_length(block) = count + 1
+            block_length(block) = count + 1;
             block = block + 1;
         end
-        block_number(itt+1) = block_number(itt) +  block_start(itt)
+        block_number(itt+1) = block_number(itt) +  block_start(itt);
+        itt = itt+1;
     end
-    
+    block_numbers = block_number(2:end);
     if isempty(block_length)
         block_length = 0;
     end
@@ -79,27 +80,26 @@ for config = 1:size(bin_list,1);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
   % extend the 'data' variable to  be the same height as the h_vals variable
-  big_h_vals = repmat(h_vals, size(binary_number));
+  big_h_vals = repmat(h_vals, size(data));
   big_data = repmat(data, size(h_vals));
 
   each_h1 = zeros(size(big_h_vals));
   index = 1;
-  P_gamma = log(5);
+  P_gamma = log(1);
   while index < length(data) + 1
       if binary_number(index+1) ==1
-index
           % Sum the data from the start to the end of the block, also
           % marginalise over h
-          end_of_block = index + block_length(block_number(itt+1)-1);
+          end_of_block = index + block_length(block_numbers(itt));
           if end_of_block > length(data)-1
                 end_of_block = length(data);
           end
           each_h1(:,index:end_of_block) = (-((big_data(:,index:end_of_block) ...
               - big_h_vals(:,index:end_of_block)).^2)/(2*sigma*sigma));
-          for row = 1:block_length(block_number(itt+1)-1)
+          for row = 1:block_length(block_numbers(itt))
               P_gamma(index + row - 1) = logaddexpvect(each_h1(:, row)); %  sum using logaddexpvect for each bit
           end
-          index = index + block_length(block_number(itt+1)-1); % Progess the index to look at next to the end of the block
+          index = index + block_length(block_numbers(itt)); % Progess the index to look at next to the end of the block
       else
           P_gamma(index) = (-((data(index)).^2)/(2*sigma^2));
       end
@@ -143,7 +143,7 @@ scaled_binaries = ((scaled_binaries/2) + 0.5);
 true_binary;
 
 figure        
-im = imagesc(scaled_binaries(end-25:end,:));
+im = imagesc(scaled_binaries(end-75:end,:));
 % alpha(im, (repmat(sorted_odds_matrix(end-50:end,:)/max(sorted_odds_matrix),1, 8)))
 colormap(gray)
 colorbar
