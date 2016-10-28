@@ -54,13 +54,13 @@ for config = 1:size(bin_list,1);
     n_changepoints = sum(is_changepoint);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    block_number = ones(size(data, 1), size(data, 2)+1);
+    block_number = ones(size(binary_number, 1), size(binary_number, 2));
     n_blocks = sum(block_start);
     block_length = zeros(1,n_blocks);
     block = 1;
     itt = 1;
     
-    while itt < length(data)
+    while itt < length(binary_number)
         if block_start(itt) ==1
             count = 0;
             while block_end(itt+count) ==0
@@ -88,18 +88,20 @@ for config = 1:size(bin_list,1);
   P_gamma = log(1);
   while index < length(data) + 1
       if binary_number(index+1) ==1
-          % Sum the data from the start to the end of the block, also
-          % marginalise over h
-          end_of_block = index + block_length(block_numbers(itt));
-          if end_of_block > length(data)-1
+          % Sum the data from the start to the end of the block, also marginalise over h
+          %define variable end_of_block to define where coherent
+          %marginalisation ends
+          end_of_block = index + block_length(block_numbers(index+1)-1);
+          if end_of_block > length(data)
                 end_of_block = length(data);
           end
+          
           each_h1(:,index:end_of_block) = (-((big_data(:,index:end_of_block) ...
               - big_h_vals(:,index:end_of_block)).^2)/(2*sigma*sigma));
-          for row = 1:block_length(block_numbers(itt))
+          for row = 1:block_length(block_numbers(index+1)-1)
               P_gamma(index + row - 1) = logaddexpvect(each_h1(:, row)); %  sum using logaddexpvect for each bit
           end
-          index = index + block_length(block_numbers(itt)); % Progess the index to look at next to the end of the block
+          index = index + block_length(block_numbers(index+1)-1); % Progess the index to look at next to the end of the block
       else
           P_gamma(index) = (-((data(index)).^2)/(2*sigma^2));
       end
@@ -117,8 +119,8 @@ end
 figure
 plot((l_odds))
 
-[number, value] = max(l_odds);
-candidate = dec2bin(value, length(data));
+% [number, value] = max(l_odds);
+% candidate = dec2bin(value, length(data));
 
 [sorted_odds, sort_index] = sort(l_odds);
 sorted_binaries = bin_list(sort_index,:);
@@ -146,6 +148,8 @@ figure
 im = imagesc(scaled_binaries(end-75:end,:));
 % alpha(im, (repmat(sorted_odds_matrix(end-50:end,:)/max(sorted_odds_matrix),1, 8)))
 colormap(gray)
+set(gca,'XGrid','off')
+set(gca,'YGrid','on')
 colorbar
 
 title('Colour plot of bits sorted by odds radio')
