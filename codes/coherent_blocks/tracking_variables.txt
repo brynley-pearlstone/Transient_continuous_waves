@@ -1,0 +1,23 @@
+Use trhis scratch pad to track sizes, lengths and purpose of variables through the code for RBBs.
+
+Data:
+
+
+Binary_number
+
+
+
+block_start
+
+
+
+block_end
+
+
+
+
+Block_length
+
+
+
+Block_number
