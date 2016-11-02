@@ -1,4 +1,4 @@
-function [block_length, block_numbers, n_breaks ] = binary_structure( binary_number )
+function [block_length, block_numbers, n_breaks,n_changepoints ] = binary_structure( binary_number )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -11,6 +11,9 @@ block_start = (binary_number - oldbits==1);
 
 is_changepoint = (oldbits ~= binary_number); % whenever 2 consectutive bits aree not the same, we name it as a changepoint.
 n_changepoints = sum(is_changepoint);
+if n_changepoints>length(binary_number)-3
+    n_changepoints=length(binary_number)-3;
+end
 
 block_number = ones(size(binary_number, 1), size(binary_number, 2));
 n_blocks = sum(block_start);

@@ -9,19 +9,16 @@ function [ y ] = logaddexpvect( x )
 % y = log(sum_vect);
 % This is the by-the numbers way to do it. This often results in inf and
 % -inf outputs
-% 
-% running_answer = x(1);
-% if length(x)>1;
-%     for itteration = 2:length(x)
-%         if x(itteration)<running_answer
-%             new_answer = log(exp(x(itteration) - running_answer) + 1) + running_answer;
-%         else
-%             new_answer = log(exp(running_answer - x(itteration) ) + 1) + x(itteration);
-%         end
-%         running_answer = new_answer;
-%     end
-% end
-% y = running_answer;
+
+running_answer = x(1);
+if length(x)>1;
+    for itteration = 2:length(x)
+        if x(itte
+        new_answer = log(exp(x(itteration) - running_answer) + 1) + running_answer;
+        running_answer = new_answer;
+    end
+end
+y = running_answer;
 % This is my first try at a fix following the standard method. This still
 % sometimes results in +/-inf values for high SNR
 
@@ -36,10 +33,4 @@ function [ y ] = logaddexpvect( x )
 % This third attempt is an approximation which should prevent overflow and
 % underflow, but still result in some infinities.
 
-
-running_answer = -inf;
-for itteration = 1:length(x)
-   running_answer = logplus(running_answer, x(itteration));
-end
-y = running_answer;
 end
