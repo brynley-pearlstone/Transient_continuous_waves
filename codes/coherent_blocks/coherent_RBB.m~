@@ -12,7 +12,7 @@
 clear all
 h_sd = 1*10^(-24);
 h = rand * h_sd;
-sigma = h * 0.001;
+sigma = h * 0.1;
 hs = linspace(0, h_sd, 1001);
 [offset, h_loc] = min(abs(hs - h));
 
@@ -78,7 +78,7 @@ for config = 1:length(bin_list);
         l_likelihood(config) = sum(P_gamma(config,:));
         
     end
-    l_norm = log((nchoosek(length(data)-1,n_changepoints(config)))*(2^(length(data))-1));
+    l_norm = log(nchoosek(length(data)-1,n_changepoints(config)));%*(2^(length(data))-1));
     l_evidence(config) =  l_likelihood(config) - l_norm;
 end
 

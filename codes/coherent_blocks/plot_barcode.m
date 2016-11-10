@@ -2,7 +2,7 @@ function [ scale, scaled_binaries] = plot_barcode( to_plot, sorted_odds , sorted
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-to_plot = length(sorted_odds) - 75;
+% to_plot = length(sorted_odds) - ;
 
 % Define the scaling factor for the barcode plot. 
 % odds should come in sorted already. With the highest number at the end.
@@ -20,12 +20,18 @@ scale = scale /scale_max;
 % +/-1. 
 % Then we add 1, and divide by 2, so they run from 0.5+/- delta to 0/1
 
-scaled_binaries = (sorted_binaries(to_plot:end,:)-0.5)*2;
+% scaled_binaries = (sorted_binaries(to_plot:end,:)-0.5)*2;
+
+scaled_binaries = (sorted_binaries(to_plot:end,:));
 
 for configuration = 1:length(scale)
     scaled_binaries(configuration,:) = scaled_binaries(configuration,:)*scale(configuration);
 end
-scaled_binaries = (scaled_binaries + 1)/2;
+
+% scaled_binaries = (scaled_binaries + 1)/2;
+
+
+scaled_binaries = (scaled_binaries );
 
 figure
 im = imagesc(scaled_binaries(1:end,:));

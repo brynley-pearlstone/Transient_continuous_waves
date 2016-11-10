@@ -1,3 +1,7 @@
+function [ sorted_binaries, sorted_n_CP ] = RBB_func( signal_type, h_prior, chunk_SNR , mode)
+%UNTITLED4 Summary of this function goes here
+%   Detailed explanation goes here
+
 % This script is to find the probability of obtaining any one of the 256
 % 8-bit binary unmbers which could constitute a changepoint configuration.
 % We define \Gamma as the 8 bit number, and \gamma_i as each bimary element
@@ -9,23 +13,32 @@
 % analysis), h fed forward from CW analysis
 % We compute the probability for each of the 256 8-bit numbers
 
-clear all
 h_sd = 1*10^(-24);
 h = rand * h_sd;
-sigma = h * 0.001;
+sigma = h/chunk_SNR;
 hs = linspace(0, h_sd, 1001);
 [offset, h_loc] = min(abs(hs - h));
 
-l_prior = log(zeros(1000, 1));
-l_prior(h_loc) =0;
+if h_prior == 'delta'
+     delta_prior = log(zeros(1000, 1));
+     delta_prior(h_loc) =0;
+end
+
+l_prior = log(h_prior);
 
 h_vals = linspace(h_sd/1001,h_sd,1000)';
 log_dh = log(h_vals(6) - h_vals(5));
-[data, true_binary] = make_all_signal(8, sigma, h);
+
+if signal_type == 'Noise'
+    [data, true_binary] = make_all_noise(8, sigma, h);
+elseif signal_type == 'Signal'
+    [data, true_binary] = make_all_signal(8, sigma, h);
+elseif signal_type == 'Transient'
+    [data, true_binary] = make_data(8, sigma, h);
 
 bin_list = dec2bin(0:2^(length(data))-1) - '0';
 l_likelihood =  zeros(size(bin_list,1),1);  % We would work in log-space
-is_signal = true_binary;
+
 
 big_h_vals = repmat(h_vals, size(data));
 big_prior = repmat(l_prior, size(data));
@@ -35,12 +48,12 @@ l_evidence = zeros(size(bin_list,1),1);
 
 for config = 1:length(bin_list);
     binary_number = (bin_list(config,:)); % The binary configuration that we are considering now
-%     binary_number = cat( 2, binary_number, [0,0]);
+    binary_number = cat( 2, binary_number, [0,0]);
     
     [block_length, block_numbers, n_breaks, n_changepoints(config) ] = binary_structure( binary_number );
     each_h1 = -inf * ones(size(big_h_vals));
     index = 1;
-    while index < length(data) -1
+    while index < length(data) + 1
         if binary_number(index) == 1 && binary_number(index+1) ==1
             
             % Sum the data from the start to the end of the block, also marginalise over h
@@ -78,21 +91,15 @@ for config = 1:length(bin_list);
         l_likelihood(config) = sum(P_gamma(config,:));
         
     end
-    l_norm = log((nchoosek(length(data)-1,n_changepoints(config)))*(2^(length(data))-1));
-    l_evidence(config) =  l_likelihood(config) - l_norm;
+    l_norm = log(nchoosek(length(data)-1,n_changepoints));%*(2^(length(data))-1));
+    if mode == 'prior_only';
+         l_evidence(config) = - l_norm;
+    else
+         l_evidence(config) = l_likelihood(config) - l_norm;
+    end
 end
 
 l_odds = l_evidence - l_evidence(1);
-[sorted_evidence, evidence_index] = sort(l_evidence);
-sorted_CP = n_changepoints(evidence_index);
-figure
-subplot(2,1,1)
-plot(sorted_evidence);
-title('sorted evidemce')
-subplot(2,1,2)
-plot(sorted_CP)
-title('Sorted n_CP')
-
 
 % Define the odds of one config vs all other configs
 % Denominator is sum of all that are not that index
@@ -114,7 +121,8 @@ sorted_odds_all = sort(l_odds_all);
 %This doesn't go anywhere yet, but keeping it in here for later.
 
 [sorted_odds, sort_index] = sort(l_odds);
-sorted_binaries = bin_list(evidence_index,:);
+sorted_binaries = bin_list(sort_index,:);
+sorted_n_CP = n_changepoints(sort_index);
 sorted_odds_matrix = transpose(repmat(sorted_odds, 8, 1));
 
 is_max_odds = sorted_binaries(sorted_odds==sorted_odds(end),:);
@@ -124,4 +132,10 @@ figure
 plot(sorted_odds)
 title('Sorted odds')
 
-[  scale, scaled_binaries] = plot_barcode( length(data), sorted_odds , sorted_binaries);
+figure
+plot(exp(sorted_odds))
+title('Exp sorted odds')
+
+[scale, scaled_binaries] = plot_barcode( 75, sorted_odds , sorted_binaries);
+end
+
