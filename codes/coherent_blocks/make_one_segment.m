@@ -1,4 +1,4 @@
-function [ data, is_signal, noise_settings] = make_all_noise( n_segs, sigma, h_sd, noise_seed)
+function [ data, is_signal, seg_settings, noise_settings ] = make_one_segment( n_segs, sigma, h_sd , seg_seed, noise_seed)
 % [ segments ] = make_data( n_segs, sigma )
 %UNTITLED2 Summary of this function goes here
 %   Creates 8 segments of data based on on-off data with aximum CW
@@ -15,14 +15,24 @@ else
     noise = normrnd(0, sigma, size(data));
 end
 
-is_signal = zeros(size(data));
+if exist('seg_seed')
+    rng(seg_seed);
+    seg_settings = rng;
+    on_segment= floor((rand*(n_segs-1))+1);
+else
+    seg_settings = rng;
+    on_segment = floor((rand*(n_segs-1))+1);
+end
 
-signal = is_signal;
+is_signal = zeros(n_segs, 1);
+is_signal(on_segment) = 1;
+ 
+
 h_val = ones(size(data));
 
-
 aitches = h_sd;
-signal_size = aitches;
+
+signal_size = aitches * h_val; % + aitch_noise;
 for seg = 1:length(data)
     data(seg) = (is_signal(seg) * signal_size(h_val(seg)) + noise(seg));
     data(seg) = abs(data(seg));

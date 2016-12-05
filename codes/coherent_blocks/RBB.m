@@ -19,22 +19,27 @@ sigma = h/chunk_SNR;
 hs = linspace(0, h_sd, 1001);
 [offset, h_loc] = min(abs(hs - h));
 
-if h_prior == 'delta'
-     delta_prior = log(zeros(1000, 1));
-     delta_prior(h_loc) =0;
+l_prior = log(h_prior);
+
+if strcmp(h_prior, 'delta')
+     l_prior = log(zeros(1000, 1));
+     l_prior(h_loc) =0;
 end
 
-l_prior = log(h_prior);
+
 
 h_vals = linspace(h_sd/1001,h_sd,1000)';
 log_dh = log(h_vals(6) - h_vals(5));
 
-if signal_type == 'Noise'
+if strcmp(signal_type, 'Noise')
     [data, true_binary] = make_all_noise(8, sigma, h);
-elseif signal_type == 'Signal'
+elseif strcmp(signal_type, 'Signal')
     [data, true_binary] = make_all_signal(8, sigma, h);
-elseif signal_type == 'Transient'
+elseif strcmpsignal_type, 'Transient')
     [data, true_binary] = make_data(8, sigma, h);
+elseif strcmp(signal_type, 'One segment')
+     [data, true_binary] = make_one_segment(8, sigma, h);
+end
 
 bin_list = dec2bin(0:2^(length(data))-1) - '0';
 l_likelihood =  zeros(size(bin_list,1),1);  % We would work in log-space
@@ -92,7 +97,7 @@ for config = 1:length(bin_list);
         
     end
     l_norm = log(nchoosek(length(data)-1,n_changepoints));%*(2^(length(data))-1));
-    if mode == 'prior_only';
+    if strcmp(mode,'prior_only');
          l_evidence(config) = - l_norm;
     else
          l_evidence(config) = l_likelihood(config) - l_norm;
