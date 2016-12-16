@@ -48,8 +48,8 @@ function [  data,sorted_binaries, sorted_odds_all, sorted_n_CP , sorted_evidence
 h_sd = 1*10**(-24)
 h =  0.8* h_sd
 sigma = h /chunk_SNR
-hs = linspace(0, h_sd, 1001)
-[offset, h_loc] = min(np.abs(hs - h))
+hs = np.linspace(0, h_sd, 1001)
+[offset, h_loc] = np.amin(np.abs(hs - h))
 
 if h_prior == 'delta':
      l_prior = np.log(zeros(1000, 1))
@@ -71,7 +71,7 @@ elif signal_type == 'One segment':
 
 #create a list of binary numbers of length len(data)
 
-numlist = numpy.linspace(0, (2**len(data))-1, num=2**len(data))
+numlist = np.linspace(0, (2**len(data))-1, num=2**len(data))
 bin_list = []
 for itt in range(len(numlist)):
 	number = bin(int(numlist[int(itt)]))
@@ -82,6 +82,8 @@ for itt in range(len(numlist)):
 		x = [0] + x	
 	bin_list.append(x)
 
+bin_array = np.array(bin_list)
+
 l_likelihood =  zeros(size(bin_list,1),1)  # We would work in log10-space
 
 big_h_vals = np.matlib.repmat(h_vals, data.shape[0], data.shape[1])
@@ -89,9 +91,10 @@ big_prior = np.matlib.repmat(l_prior, data.shape[0], data.shape[1])
 big_data = np.matlib.repmat(data, h_vals.shape[0],  h_vals.shape[1])
 P_gamma = np.zeros(bin_list.shape)
 l_evidence = np.zeros(size(bin_list,1),1)
+config = 0
 
-for config in bin_list:
-	binary_number = bin_list[config] # The binary configuration that we are considering now   
+for binary_number in bin_array:
+	# binary_number = bin_list[config] # The binary configuration that we are considering now   
 !!!	[block_length, block_numbers, n_breaks, n_changepoints(config) ] = binary_structure( binary_number )
 	binary_number = binary_number.append(0)
 	each_h1 = -1*np.inf * np.ones(big_h_vals.shape)
@@ -102,61 +105,64 @@ for config in bin_list:
 			end_of_block = index + block_length[block_numbers[index]-1]-1
 			if end_of_block > len(data):
 				end_of_block = len(data)
-	     		each_h1(:,index:end_of_block) =  -((big_data(:,index:end_of_block) - big_h_vals(:,index:end_of_block)).^2)/(2*sigma*sigma) + big_prior(:,index:end_of_block) + log((1/(sqrt(2*pi)*sigma)))
+	     		each_h1[:,index:end_of_block] =  -((big_data[:,index:end_of_block] - big_h_vals[:,index:end_of_block])**2)/(2.0*sigma*sigma) + big_prior[:,index:end_of_block] + np.log((1/(sqrt(2.0*np.pi)*sigma)))
 			# P_gamma is the sum of these values, log10(sum(prior * gaussian)) Calculate P_gamma chunk by chunk for each chunk in the block
-			for row = 0:end_of_block-index:
-				P_gamma(config, index+row) = logaddexpvect(each_h1(:,index+row)) # sum using logaddexpvect for each bit
+			for row in range(0,end_of_block-index):
+!!!!				P_gamma[config, index+row] = logaddexpvect(each_h1[:,index+row]) # sum using logaddexpvect for each bit
 			index = end_of_block # Progess the index to end of block  
-			elseif binary_number(index) == 1 && binary_number(index+1) ==0
-			each_h1(:,index) = big_prior(:, index) + log(1/(sqrt(2*pi)*sigma)) - (((big_data(:,index) - big_h_vals(:,index)).^2)/(2*sigma*sigma))
-		    	P_gamma(config,index) = logaddexpvect(each_h1(:,index))
-			elseif binary_number(index) == 0
-		    	P_gamma(config,index) =   log(1/(sqrt(2*pi)*sigma)) + (-((data(index)).^2)/(2*sigma*sigma))
+		elif binary_number[index] == 1 && binary_number[index+1] ==0:
+			each_h1[:,index] = big_prior[:, index] + np.log(1/(sqrt(2*np.pi)*sigma)) - (((big_data[:,index] - big_h_vals[:,index])**2)/(2.0*sigma*sigma))
+		    	P_gamma[config,index] = logaddexpvect(each_h1[:,index])
+		elif binary_number[index] == 0:
+		    	P_gamma[config,index] =   np.log(1/(sqrt(2*np.pi)*sigma)) + (-((data[index])**2)/(2.0*sigma*sigma))
 		index = index + 1
-		l_likelihood(config) = sum(P_gamma(config,:))
+		l_likelihood[config] = np.sum(P_gamma[config,:])
 	
-	if strcmp(CP_prior, 'Flat'):
-		l_norm(config) = log((1/(length(binary_number)-1))*(nchoosek(length(data)-1,n_changepoints(config))))
-	elif strcmp(CP_prior, 'exp'):
-		l_norm(config) = log((1/(length(binary_number)-1))*(nchoosek(length(data)-1,n_changepoints(config)))) - n_changepoints
+	if CP_prior == 'Flat':
+		l_norm[config] = np.log((1/(len(binary_number)-1))*(nchoosek(len(data)-1,n_changepoints[config])))
+	elif CP_prior == 'exp':
+		l_norm[config] = np.log((1/(len(binary_number)-1))*(nchoosek(len(data)-1,n_changepoints[config]))) - n_changepoints
 	else:
-		l_norm(config) = log((1/(length(binary_number)-1))*(nchoosek(length(data)-1,n_changepoints(config))))
+		l_norm[config] = np.log((1/(len(binary_number)-1))*(nchoosek(len(data)-1,n_changepoints[config])))
      
 	if mode == 'prior_only':
-		l_evidence(config) = - l_norm(config)
+		l_evidence[config] = - l_norm[config]
 	elif mode == 'normal':
-		l_evidence(config) = l_likelihood(config) - l_norm(config)
+		l_evidence[config] = l_likelihood[config] - l_norm[config]
 	elif mode == 'likelihood_only':
-		l_evidence(config) = l_likelihood(config)
+		l_evidence[config] = l_likelihood[config]
+	config += 1
+#     [ l_evidence(config), P_gamma(config) ] = index_loop(binary_number,big_h_vals, big_prior, big_data, P_gamma, l_evidence, data , sigma, n_changepoints(config) , block_length   )
 
-#%     [ l_evidence(config), P_gamma(config) ] = index_loop(binary_number,big_h_vals, big_prior, big_data, P_gamma, l_evidence, data , sigma, n_changepoints(config) , block_length   )
+l_odds = l_evidence - l_evidence[1]
+sorted_evidence = sorted(np.exp(l_evidence))
+evidence_index = [i[0] for i in sorted(enumerate(l_evidence), key=lambda x:x[1])]
 
-l_odds = l_evidence - l_evidence(1)
-[sorted_evidence, evidence_index] = sort(exp(l_evidence))
 sorted_n_CP = n_changepoints(evidence_index)
+
 
 # Define the odds of one config vs all other configs
 # Denominator is sum of all that are not that index
-odds_all = zeros(size(l_evidence));
+odds_all = np.zeros(len(l_evidence));
+evidence = np.ma.array(np.exp(l_evidence), mask=False)
+
 for index in range(len(l_evidence)):
-	odds_all_num  = exp(l_evidence(index));
-	if index == 1:
-		odds_all_denom = sum(exp(l_evidence(index+1:end)));
-	elif index == len(l_evidence):
-		odds_all_denom = sum(exp(l_evidence(1:index-1)));
-	else:
-		odds_all_denom_1 = sum(exp(l_evidence(1:index-1)));
-		odds_all_denom_2 = sum(exp(l_evidence(index+1:end)));
-		odds_all_denom = odds_all_denom_1 + odds_all_denom_2;
-    	
-	odds_all(index) = odds_all_num/odds_all_denom;
+	evidence.mask[index] = True
+	odds_all_denom np.sum(evidence)
+	evidence.mask = False
+	odds_all[index] = evidence[index]/odds_all_denom;
 
-[sorted_odds_all, odds_index] = sort(odds_all);
-[sorted_odds, sort_index] = sort(exp(l_odds));
-sorted_binaries = bin_list(flipud(sort_index),:);
-sorted_priors = l_norm(sort_index);
+sorted_odds_all = sorted(odds_all)
+odds_index = [i[0] for i in sorted(enumerate(odds_all), key=lambda x:x[1])]
 
-sanity_check = odds_index - sort_index;
+sorted_odds = sorted(np.exp(l_odds))
+sort_index = [i[0] for i in sorted(enumerate(l_odds), key=lambda x:x[1])]
+
+sorted_binaries = [bin_list[i] for i in odds_index] #bin_list(flipud(sort_index),:);
+
+sorted_priors = [l_norm[i] for i in sort_index]
+
+sanity_check = odds_index - sort_index
 
 #figure
 #plot(log10(sorted_odds))
