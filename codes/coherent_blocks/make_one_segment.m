@@ -38,6 +38,8 @@ for seg = 1:length(data)
     data(seg) = abs(data(seg));
 end
 
+save('../Data_files/test2.txt', 'data', 'h_sd', '-ascii');
+
 figure
 plot(data)
 hold on

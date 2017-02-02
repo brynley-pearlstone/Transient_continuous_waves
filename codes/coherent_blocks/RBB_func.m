@@ -69,7 +69,9 @@ for config = 1:length(bin_list);
                 end_of_block = length(data);
             end
             % each_h1 describes the contribution from each h have that we marginalise over As we have a delta function prior, this should be small for values of h that are not the true value of h. 
-            each_h1(:,index:end_of_block) =  -((big_data(:,index:end_of_block) - big_h_vals(:,index:end_of_block)).^2)/(2*sigma*sigma) + big_prior(:,index:end_of_block) + log((1/(sqrt(2*pi)*sigma))) ;
+            each_h1(:,index:end_of_block) =  -((big_data(:,index:end_of_block) ...
+                - big_h_vals(:,index:end_of_block)).^2)/(2*sigma*sigma) + ...
+                big_prior(:,index:end_of_block) + log((1/(sqrt(2*pi)*sigma))) ;
             % P_gamma is the sum of these values, log10(sum(prior * gaussian)) Calculate P_gamma chunk by chunk for each chunk in the block
             for row = 0:end_of_block-index;
                 P_gamma(config, index+row) = logaddexpvect(each_h1(:,index+row)); %  sum using logaddexpvect for each bit
@@ -143,5 +145,5 @@ figure
 plot(log10(sorted_odds_all))
 title('Sorted odds of a configuration vs all other configurations')
 
-[  scale, scaled_binaries] = plot_barcode( 25,  flipud(log10(sorted_odds_all)) , sorted_binaries);
+[  scale, scaled_binaries] = plot_barcode( 16,  flipud(log10(sorted_odds_all)) , sorted_binaries);
 

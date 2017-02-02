@@ -98,8 +98,10 @@ hs = np.linspace(0, h_sd, 1001)
 offset = (np.abs(hs - h))
 h_loc = np.argmin(offset)
 # Delta function prior
-l_prior = -1*np.inf*np.ones(1000)
-l_prior[h_loc] =0
+#l_prior = -1*np.inf*np.ones(1000)
+#l_prior[h_loc] =0
+l_prior = 0.001*np.ones(1000)
+
 
 h_vals = np.linspace(h_sd/1001.0,h_sd,num=1000)
 log_dh = np.log(h_vals[6] - h_vals[5])
@@ -151,7 +153,7 @@ for binary_number in bin_array:
 			end_of_block = index + block_length[int(block_numbers[index])-1] 
 			exponent = -(((big_data[:,index:end_of_block] - big_h_vals[:,index:end_of_block])**2)/(2*sigma*sigma)) # -((D-h)/sqrt(2)*sigma)**2
 					
-			each_h1[:,index:end_of_block] = exponent + big_prior[:,index:end_of_block] - prefactor
+			each_h1[:,index:end_of_block] = exponent + big_prior[:,index:end_of_block] + log_dh - prefactor
 			# P_gamma is the sum of these values, log10(sum(prior * gaussian)) 
 			# Calculate P_gamma chunk by chunk for each chunk in the block
 
@@ -162,7 +164,7 @@ for binary_number in bin_array:
 			
 		elif binary_number[index] == 1 and binary_number[index + 1] == 0:
 			exponent = -(((big_data[:, index] - big_h_vals[:,index])**2) / (2 * sigma * sigma)) # -((D-h)/(sqrt(2)sigma))**2  
-			each_h1[:,index] = exponent + big_prior[:,index] - prefactor
+			each_h1[:,index] = exponent + big_prior[:,index]  + log_dh - prefactor
 		    	P_gamma[config,index] = logaddexpvect(each_h1[:,index]) # There is a numpy logaddexp function
 
 		elif binary_number[index] == 0:
@@ -219,6 +221,7 @@ for i in range(len(results_dict)):
 
 plot_functions.plot_like(np.log10(sorted_evidence), output)
 plot_functions.plot_odds(np.log10(sorted_odds_all), output)
+plot_functions.barcode_plot(sorted_binaries,  sorted_odds, output)
 #for i in sorted_binaries:
 #	print(str(i))
 

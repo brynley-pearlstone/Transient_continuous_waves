@@ -48,6 +48,9 @@ for seg = 1:length(data)
     data(seg) = (is_signal(seg) * signal_size(h_val(seg)) + noise(seg));
 end
 
+dlmwrite('../Data_files/test.txt', data);%, '-ascii');
+dlmwrite('../Data_files/test.txt', h_sd, '-append');
+
 figure
 plot(data, '.-')
 hold on

@@ -39,7 +39,6 @@ end
 figure
 plot(data)
 
-hold on
-plot(signal_size, '--')
+
 end
 
