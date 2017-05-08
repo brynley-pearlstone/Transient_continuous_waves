@@ -1,0 +1,2 @@
+Input binary:
+00

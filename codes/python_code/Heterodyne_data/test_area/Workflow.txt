@@ -1,0 +1,86 @@
+#Step 1:
+#Create fake data
+#	start time, end time, on time, off time
+#	for CP, pick start time, end time, generate CP times. 
+#	Inj_1 = t_start - t_CP1, SNR1
+#	Inj_2 = t_CP1 + 1 -> t_CP2(or t_end), SNR2
+#		etc
+#	SNR on as constant
+#	SNR off = 0
+#	N_CP from 0 to n_chunks - 1, uniform
+#	TO DO
+#
+make_pars.py
+# generates a folder and par file for each instance
+# IN EACH SIMULATION
+generate_binary.py
+create_fake_data.py
+STITCH DATA TOGETHER
+Remove all unused/old/done with files
+#___________________________________________________
+#________THIS GIVES US THE FAKE DATA WE NEED________
+#___________________________________________________
+
+
+#Step 2:
+#Chunk up data
+#	using timesplitter.py
+#Step 3:
+#Perform enseble of analyses
+#	using analyse_all.py
+#	TO DO - Parallelise
+#Step 4:
+#Translate from HDF5 to txt
+#	using read_all.py
+#Step 5:
+#Collate into blocks of chunks with correct values
+#	using collate_data.py
+#Step 6:
+#Compute RBB
+#	using RBB.py
+#
+
+#	Use:
+#		lalapps_pulsar_parameter_estimation_nested
+#		--fake-data 
+#		--fake-psd
+#		--fake-starts
+#		--fake-lengths
+#		--fake-dt
+#		--scale-snr
+#
+# --inject-file       a pulsar parameter (par) file containing the parameters
+#                     of a signal to be injected. If this is given a signal
+#                     will be injected
+# --inject-output     a filename to which the injected signal will be
+#                     output if specified
+# --fake-data         a list of IFO's for which fake data will be generated
+#                     e.g. H1,L1 (delimited by commas). Unless the --fake-psd
+#                     flag is set the power spectral density for the data will
+#                     be generated from the noise models in LALNoiseModels.
+#                     For Advanced detectors (e.g Advanced LIGO) prefix the
+#                     name with an A (e.g. AH1 for an Advanced LIGO detector
+#                     at Hanford). The noise will be white across the data
+#                     band width
+# --fake-psd          if you want to generate fake data with specific power
+#                     spectral densities for each detector giving in
+#                     --fake-data then they should be specified here delimited
+#                     by commas (e.g. for --fake-data H1,L1 then you could use
+#                     --fake-psd 1e-48,1.5e-48) where values are single-sided
+#                     PSDs in Hz^-1
+# --fake-starts       the start times (in GPS seconds) of the fake data for
+#                     each detector separated by commas (e.g.
+#                     910000000,910021000). If not specified these will all
+#                     default to 900000000
+# --fake-lengths      the length of each fake data set (in seconds) for each
+#                     detector separated by commas. If not specified these
+#                     will all default to 86400 (i.e. 1 day)
+# --fake-dt           the data sample rate (in seconds) for the fake data for
+#                     each detector. If not specified this will default to
+#                     60s
+# --scale-snr         give a (multi-detector) SNR value to which you want to
+#                     scale the injection. This is 1 by default
+#
+
+# lalapps_pulsar_parameter_estimation_nested --inject-file ../PULSAR04.par --inject-output trial.output --fake-data H1,L1 --scale-snr 100 --Nlive 1024 --par-file ../PULSAR04.par --outfile test_out --prior-file ../PULSAR04.priors 
+

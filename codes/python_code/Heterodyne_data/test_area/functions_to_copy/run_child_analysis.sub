@@ -1,0 +1,10 @@
+universe = vanilla
+executable =  do_analysis.py
+arguments = -r /home/brynleypearlstone/bpdocs/quasi_continuous_waves/Binary_numbers/codes/python_code/Heterodyne_data/test_area/functions_to_copy/PULSAR$(Pulsar_number)/ -E /home/brynleypearlstone/bpdocs/quasi_continuous_waves/Binary_numbers/codes/python_code/Heterodyne_data/test_area/functions_to_copy/ -n 8  
+getenv = True
+log = /home/brynleypearlstone/bpdocs/quasi_continuous_waves/Binary_numbers/codes/python_code/Heterodyne_data/test_area/functions_to_copy/log/run-$(cluster).log
+error = /home/brynleypearlstone/bpdocs/quasi_continuous_waves/Binary_numbers/codes/python_code/Heterodyne_data/test_area/functions_to_copy/log/run-$(cluster).err
+output = /home/brynleypearlstone/bpdocs/quasi_continuous_waves/Binary_numbers/codes/python_code/Heterodyne_data/test_area/functions_to_copy/log/run-$(cluster).out
+notification = never
+accounting_group = aluk.dev.o1.cw.transient.development
+queue 1
