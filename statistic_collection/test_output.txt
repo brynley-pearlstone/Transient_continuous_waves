@@ -1,0 +1,16 @@
+#####
+ SNR = 30 
+ 	For 5 test runs: 
+ 	Mean configurations correctly guessed: 1.0 
+ 	Mean digits mismatched: 0.0
+ 	Mean rank of true binary (0 is best): 0.0
+ ##### 
+ ##### 
+#####
+ SNR = 30 
+ 	For 5 test runs: 
+ 	Mean configurations correctly guessed (1 is best): 1.0 
+ 	Mean digits mismatched (0 is best): 0.0
+ 	Mean rank of true binary (0 is best): 0.0
+ ##### 
+ ##### 

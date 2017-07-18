@@ -1,0 +1,21 @@
+Need to write a code
+
+loop from 0 to number of sims
+
+Collate error statistics from each simulation
+	Don't do as parallel - could cause awful overwrite error
+
+change path to loop iteration number
+call analysis file
+
+Go into output file
+Read sorted_binaries - go to last entry, store it
+Read input binary
+number_wrong_places[i] = abs(found_binaries[j] - true_binary[j])
+append to file of number_wrong_places
+
+From the output - read the position
+append to file of position
+
+
+Take list averages

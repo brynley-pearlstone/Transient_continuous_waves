@@ -1,0 +1,64 @@
+Step 1:
+Create fake data
+	start time, end time, on time, off time
+	TO DO
+Step 2:
+Chunk up data
+	using timesplitter.py
+Step 3:
+Perform enseble of analyses
+	using analyse_all.py
+Step 4:
+Translate from HDF5
+	using read_all.py
+Step 5:
+Collate into blocks of binary numbers & chunks
+	using collate_data.py
+Step 6:
+Compute RBB
+	using RBB.py
+
+
+
+Diagram
+
+Create data
+		                           	Start
+		                         	/ | \
+	                         	       /  |  \
+	______________________________________/	  |   \____________________________________
+        |                                         |                                       |
+     Realisation                               Realisation                      	Realisation
+	|	                              	  |	                                  |
+        \_________________________________________|_______________________________________/
+
+
+All of RBB analysis
+                                                Start
+                                                / | \
+                                               /  |  \
+        ______________________________________/   |   \____________________________________
+	|					  |					  |
+     Split time	                               Split time                       	Split time
+	|	                               	  |	                                  |
+   Write args	                              Write arge                        	Write args
+       /|\				         /|\                                     /|\
+      / | \                                     / | \                                   / | \
+Pll lalapps_P_P_E_N                      Pll lalapps_P_P_E_N                     Pll lalapps_P_P_E_N
+     \  |  /                                   \  |  /                                 \  |  /
+      \ | /                                     \ | /                                   \ | /
+       \|/                                       \|/                                     \|/
+        V                                         V                                       V
+   Read & collate                            Read & collate                        Read & collate
+        |                                         |                                       |
+       RBB					 RBB                                     RBB
+	\					  |					  /
+	 \					  |                                      /
+	  \_______________________________________|_____________________________________/
+						  |
+						  |
+						  |
+					Group statistics
+
+
+
