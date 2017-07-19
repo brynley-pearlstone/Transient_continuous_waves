@@ -101,7 +101,7 @@ prior_out.seek(0)
 prior_head = ['H0', 'PHI0', 'PSI', 'COSIOTA']
 prior_form = 'uniform'
 prior_lower = [0, 0, 0, -1]
-prior_upper = [1e-23, 3.141592653589793, 1.5707963267948966, 1]
+prior_upper = [1e-20, 3.141592653589793, 1.5707963267948966, 1]
 
 for place,name in enumerate(prior_head):
 	prior_out.write(name + '\t' + prior_form + '\t' + str(prior_lower[place]) + '\t' + str(prior_upper[place]) + '\n')
