@@ -16,8 +16,8 @@ mpl.rcParams['agg.path.chunksize'] = 10000
 import matplotlib.pyplot as plt
 import math
 import matplotlib as mpl
-import plotly.plotly as py
-import plotly.tools as tls
+#import plotly.plotly as py
+#import plotly.tools as tls
 
 parser = ArgumentParser()
 
@@ -49,7 +49,7 @@ def plot_boxplot(list_of_inputs, list_of_SNR, input_type, output_file):
 
 
 
-def plot_scatterplot(list_of_tuples, input_type, output_file):
+def plot_scatterplot(list_of_SNRs, list_of_values, input_type, output_file):
 	value = []
 	SNR = []
 	for pair in list_of_tuples:
@@ -57,8 +57,12 @@ def plot_scatterplot(list_of_tuples, input_type, output_file):
 		SNR.append(float(pair[1]))
 	ax = plt.figure()
 	ax.plot(value, SNR)
+	ax.xlabel('Total trial SNR')
+	ax.ylabel(input_type)
+	ax.title(str(input_type) + ' distribution over trial SNR')
+	ax.savefig(output_file)
 	
-
+	
 
 
 

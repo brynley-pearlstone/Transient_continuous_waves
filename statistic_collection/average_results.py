@@ -72,7 +72,7 @@ with open(input_dir, 'r') as f:
 		mismatch_list.append(line_dict["Number wrong places"])
 		posn_list.append(line_dict["List position"])
 		is_correct_list.append(line_dict["Is correct"])
-	`	true_SNR_list.append(line_dict["Full SNR"])
+		true_SNR_list.append(line_dict["Full SNR"])
 		Best_guess_list.append(line_dict["Best guess"])
 		True_binary_list.append(line_dict["True binary"])
 		Pulsar_number_list.append(line_dict["Pulsar number"])
@@ -98,6 +98,11 @@ with open(args.output_path, 'a') as output:
 # Coherent adds as sqrt(t)
 # Incoherent adds as 4thrt(t)
 	
+# Make set of plots
+#import *** as pt #plotting function
+
+#pt.function_name(args)
+
 	
 
 
