@@ -125,7 +125,7 @@ for itt_number in range(len(bin_array)):
 	data = all_data[itt_number]
 	l_likelihood[config] = sum(data)
 	l_norm.append(np.log((1/(len(binary_number)))*(nCr(len(data)-1,n_changepoints[config]))))
-	l_evidence.append(l_likelihood[config] + l_norm[config])
+	l_evidence.append(l_likelihood[config])# + l_norm[config])
 #	config += 1
 
 l_odds = l_evidence - l_evidence[0]
@@ -137,25 +137,39 @@ sorted_n_CP = [n_changepoints[i] for i in evidence_index]
 
 # Define the odds of one config vs all other configs
 # Denominator is sum of all that are not that index
-odds_all = np.zeros(len(l_evidence));
+odds_all = np.zeros(len(l_evidence))
+posterior = np.zeros(len(l_evidence))
 mask_evidence = np.ma.array((l_evidence), mask=False) #remove exponential applied to evidence - try to avoid NAN
 for index in range(len(l_evidence)):
 	mask_evidence.mask[index] = True
 	running_evidence_sum = -1 * np.inf
 	for i in range(len(mask_evidence)):
 		if i != index:
-			running_evidence_sum =  np.logaddexp(running_evidence_sum, mask_evidence[i])	#odds_all_denom = np.sum(mask_evidence)
+			to_add =  mask_evidence[i] * l_norm[i]
+			running_evidence_sum =  np.logaddexp(running_evidence_sum, to_add) # mask_evidence[i])	#odds_all_denom = np.sum(mask_evidence)
 	odds_all_denom = running_evidence_sum
 	mask_evidence.mask = False
-	#print(odds_all_denom)
+
+        running_denom_sum = -1 * np.inf
+        for i in range(len(l_evidence)):
+		to_add2 =  l_evidence[i] * l_norm[i]
+                running_denom_sum =  np.logaddexp(running_denom_sum, to_add2) # mask_evidence[i])  #odds_all_denom = np.sum(mask_evidence)
+        posterior_denom = running_denom_sum
+      	#print(odds_all_denom)
 	#print(mask_evidence[index])
 	odds_all[index] = mask_evidence[index]  - odds_all_denom;
+	posterior[index] = l_evidence[index] - posterior_denom
+
+
 
 sorted_odds_all = sorted(odds_all)
 odds_index = [i[0] for i in sorted(enumerate(odds_all), key=lambda x:x[1])]
 
 sorted_odds = sorted(l_odds)
 sort_index = [i[0] for i in sorted(enumerate(l_odds), key=lambda x:x[1])]
+
+sorted_posteriors = sorted(posterior)
+posterior_index = [i[0] for i in sorted(enumerate(posterior), key=lambda x:x[1])]
 
 sorted_binaries = [bin_list[i] for i in odds_index]
 sorted_priors = [l_norm[i] for i in odds_index]
@@ -206,7 +220,7 @@ o.write(str(true_binary_position) + '\n\n')
 
 results_dict = []
 for i in range(len(sorted_odds_all)):
-	results_dict.append({"sorted_binaries":sorted_binaries[i], "sorted_odds_all":sorted_odds_all[i], "sorted_evidence":sorted_evidence[i] , "sorted_priors":sorted_priors[i], "data used":sorted_data[i]})
+	results_dict.append({"sorted_binaries":sorted_binaries[i], "sortd_posteriors":sorted_posteriors[i], "sorted_odds_all":sorted_odds_all[i], "sorted_odds_v_null":sorted_odds[i], "sorted_evidence":sorted_evidence[i] , "sorted_priors":sorted_priors[i], "data used":sorted_data[i]})
 
 for i in range(len(results_dict)):
 	#print(str(results_dict[i]) + "\n")
