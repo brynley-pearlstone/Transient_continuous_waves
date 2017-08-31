@@ -56,7 +56,7 @@ args = parser.parse_args()
 input_dir = args.input_path
 mismatch_list = []
 posn_list = []
-#is_correct_list = []
+is_correct_list = []
 #position = []
 #correct = []
 true_SNR_list = []
@@ -65,17 +65,16 @@ True_binary_list = []
 Pulsar_number_list = []
 
 with open(input_dir, 'r') as f:
-	s = f.read()
-	for line in s:
+	for line in f:
 		stripline = line.strip('\n')
 		line_dict = ast.literal_eval(stripline)
-		mismatch_list.append(line_dict["Number wrong places"])
-		posn_list.append(line_dict["List position"])
-		is_correct_list.append(line_dict["Is correct"])
-		true_SNR_list.append(line_dict["Full SNR"])
+		mismatch_list.append(float(line_dict["Number wrong places"]))
+		posn_list.append(float(line_dict["List position"]))
+		is_correct_list.append(float(line_dict["Is_correct"]))
+		true_SNR_list.append(float(line_dict["Full SNR"]))
 		Best_guess_list.append(line_dict["Best guess"])
 		True_binary_list.append(line_dict["True binary"])
-		Pulsar_number_list.append(line_dict["Pulsar number"])
+		Pulsar_number_list.append(float(line_dict["Pulsar number"]))
 
 
 
@@ -90,7 +89,7 @@ posn_mean = (np.sum(posn_list) + 0.0) / number_positions
 correct_mean = (np.sum(is_correct_list) + 0.0) / number_corrects
 
 with open(args.output_path, 'a') as output:
-	output.write('#####\n SNR = ' + str(SNR) + ' \n \tFor ' + str(number_mismatches) + ' test runs: \n \tMean configurations correctly guessed (1 is best): ' + str(correct_mean) + ' \n \tMean digits mismatched (0 is best): ' + str(mismatch_mean) + '\n \tMean rank of true binary (0 is best): ' + str(posn_mean) + '\n ##### \n ##### \n')
+	output.write('#####\n SNR = ' + str(args.SNR) + ' \n \tFor ' + str(number_mismatches) + ' test runs: \n \tMean configurations correctly guessed (1 is best): ' + str(correct_mean) + ' \n \tMean digits mismatched (0 is best): ' + str(mismatch_mean) + '\n \tMean rank of true binary (0 is best): ' + str(posn_mean) + '\n ##### \n ##### \n')
 # Plot these measures
 # Make a plotting finction
 

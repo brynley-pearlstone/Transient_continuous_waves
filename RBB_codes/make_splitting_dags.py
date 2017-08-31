@@ -14,6 +14,7 @@ parser.add_argument("-S", "--splitter-code", dest="run_splitter", required=True,
 parser.add_argument("-p", "--exec-path", dest="execpath", required=True, help="Set the path to the required executables")
 parser.add_argument("-N", "--N-sims", dest = "N_sims", default=100, type=int, help="Set the number of parallel trials to run")
 parser.add_argument("-C", "--n_chunks", dest = "n_chunks", help = "Number of chunks to generate", metavar = "INT")
+parser.add_argument("-l", "--nlive", dest = "nlive", help = "Number of live ponts for nested sampling", metavar = "INT")
 
 
 # parse input options
@@ -53,7 +54,7 @@ fp = open(subfile, 'w')
 
 subtext = """universe = vanilla
 executable = %s 
-arguments =   -n %s  -H  %sPULSAR$(Pulsar)/fine_H1* -L %sPULSAR$(Pulsar)/fine_L1* -o %sPULSAR$(Pulsar)/output -P %sPULSAR$(Pulsar)/JPULSAR$(Pulsar).par -p %sPULSAR$(Pulsar)/JPULSAR$(Pulsar).priors -E %s -D %sPULSAR$(Pulsar)/output/
+arguments =   -n %s  -H  %sPULSAR$(Pulsar)/fine_H1* -L %sPULSAR$(Pulsar)/fine_L1* -o %sPULSAR$(Pulsar)/output -P %sPULSAR$(Pulsar)/JPULSAR$(Pulsar).par -p %sPULSAR$(Pulsar)/JPULSAR$(Pulsar).priors -E %s -D %sPULSAR$(Pulsar)/output/ -l %s
 getenv = True
 log = %s
 error = %s
@@ -61,7 +62,7 @@ output = %s
 notification = never
 accounting_group = aluk.dev.o1.cw.transient.development
 queue 1
-""" % (opts.run_splitter, opts.n_chunks,  basedir, basedir, basedir,  basedir, basedir, opts.execpath, basedir, os.path.join(logdir, 'run-$(cluster).log'), os.path.join(logdir,'run-$(cluster).err'), os.path.join(logdir,'run-$(cluster).out'))
+""" % (opts.run_splitter, opts.n_chunks,  basedir, basedir, basedir,  basedir, basedir, opts.execpath, basedir, opts.nlive, os.path.join(logdir, 'run-$(cluster).log'), os.path.join(logdir,'run-$(cluster).err'), os.path.join(logdir,'run-$(cluster).out'))
 
 fp.write(subtext)
 fp.close()

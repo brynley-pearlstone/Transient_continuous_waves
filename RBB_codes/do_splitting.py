@@ -29,6 +29,8 @@ parser.add_argument("-E", "--Execdir", dest = "execdir",
                    help = "Full path to .py files used to do analysis", metavar = "STRING")
 parser.add_argument("-D", "--analysis_dir", dest = "analysis_dir",
                   help = "Full path to output of LPPEN files", metavar = "STRING")
+parser.add_argument("-l", "--nlive", dest = "nlive",
+                  help = "Number of live points used for the nested sampler", metavar = "STRING")
 
 
 args = parser.parse_args()
@@ -47,4 +49,4 @@ for i in range(2):
 	os.system('python ' + execdir + 'timesplitter.py -f ' + L1_input + ' -n ' + str(n_chunks) + ' -o  ' + output_path + ' -d L1')
 
 
-os.system('python ' + execdir + 'write_analysis_args.py -P ' + par_files + ' -p  ' + prior_files + ' -D ' + analysis_dir + ' -n ' + str(n_chunks))
+os.system('python ' + execdir + 'write_analysis_args.py -P ' + par_files + ' -p  ' + prior_files + ' -D ' + analysis_dir + ' -n ' + str(n_chunks) + ' -l ' + str(args.nlive))

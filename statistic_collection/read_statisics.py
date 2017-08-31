@@ -131,7 +131,8 @@ if number_wrong_places == 0:
 #        correct_write.write(str(1) + '\n')
 else:
 #	correct_write.write(str(0) + '\n')
-	correct_dict = {"Is_correct" : "1" }
+	correct_dict = {"Is_correct" : "0" }
+#	correct_dict = {"Is_correct" : "1" }
 
 output.update(correct_dict)
 
@@ -149,29 +150,29 @@ full_SNR = 0
 # Get this from input binary var name true_binary
 
 #for place,bit in enumerate(true_binary):
-place = 0
-while place < len(true_binary):
-	bit = true_binary[place]	
-	if bit==0:
-		temp_SNR = 0
-		block_SNR = 0
-	elif bit==1 and true_binary[place+1]==0:
-		temp_SNR = 1 * cSNR
-		block_SNR = 0
-	elif bit==1 and true_binary[place+1]==1:
-		block_length = 1
-		while true_binary[place] == 1 and true_binary[place+1]==1:
-			block_length += 1
-			place += 1
-		block_SNR = np.sqrt(cSNR * block_length)
-		print("place = " + str(place))
-		print("block_length = " + str(block_length))
-		print(true_binary)
-		print("Block_SNR = " + str(block_SNR))
-	full_SNR = full_SNR + (temp_SNR)**0.25 + (block_SNR)**0.25
-	place += 1
-	print("Full SNR = " + str(full_SNR) + " at place " + str(place))
-SNR_dict = {"Full SNR" : full_SNR, "Chunk_SNR" : cSNR}
+#place = 0
+#while place < len(true_binary):
+#	bit = true_binary[place]	
+#	if bit==0:
+#		temp_SNR = 0
+#		block_SNR = 0
+#	elif bit==1 and true_binary[place+1]==0:
+#		temp_SNR = 1 * cSNR
+#		block_SNR = 0
+#	elif bit==1 and true_binary[place+1]==1:
+#		block_length = 1
+#		while true_binary[place] == 1 and true_binary[place+1]==1:
+#			block_length += 1
+#			place += 1
+#		block_SNR = np.sqrt(cSNR * block_length)
+#		print("place = " + str(place))
+#		print("block_length = " + str(block_length))
+#		print(true_binary)
+#		print("Block_SNR = " + str(block_SNR))
+#	full_SNR = full_SNR + (temp_SNR)**0.25 + (block_SNR)**0.25
+#	place += 1
+#	print("Full SNR = " + str(full_SNR) + " at place " + str(place))
+SNR_dict = {"Full SNR" : 0, "Chunk_SNR" : cSNR}
 
 output.update(SNR_dict)
 

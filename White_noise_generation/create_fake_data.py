@@ -55,7 +55,7 @@ end_time = start_time + signal_length
 chunk_length = signal_length / n_chunks
 
 # Define a small number to avoid division by zero
-delta = 0.01
+delta = 0.0001
 
 chunk_start = []
 chunk_end = []
@@ -64,15 +64,27 @@ chunk_SNR = []
 for i in range(n_chunks):
 	chunk_start.append(start_time + (i * chunk_length))
 	chunk_end.append(start_time + ((i+1) * chunk_length))
-	chunk_SNR.append((scale_SNR * int(binary_number[i]))+ delta)
+#	chunk_SNR.append((scale_SNR * int(binary_number[i]))+ delta)
+	if int(binary_number[i]) == 1:
+		chunk_SNR.append(scale_SNR)
+        if int(binary_number[i]) == 0:
+                chunk_SNR.append(0)
+
 
 create_fake_data = []
-
+print(binary_number)
 for chunk in range(n_chunks):
+	print(binary_number[chunk])
 	#do
-	create_fake_data.append('--inject-file ' + par_file + ' --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file + ' --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0')
+	if binary_number[chunk] == '1':
+		print('--inject-file ' + par_file + ' --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file + ' --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0')
+		create_fake_data.append('--inject-file ' + par_file + ' --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file + ' --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0')
+	elif binary_number[chunk] == '0':
+		print('--inject-file ' + par_file[:-4] + '_null.par  --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file[:-4] + '_null.par --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0')
+		create_fake_data.append('--inject-file ' + par_file[:-4] + '_null.par  --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file[:-4] + '_null.par --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0')
 
-	print(create_fake_data[chunk])
+	with open(output_path + "lppen_args.txt", 'a') as f:
+		f.write(create_fake_data[chunk] + '\n')
 	os.system('lalapps_pulsar_parameter_estimation_nested ' + create_fake_data[chunk])
 
 

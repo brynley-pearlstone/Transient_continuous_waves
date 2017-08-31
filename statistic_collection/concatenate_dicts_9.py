@@ -12,7 +12,7 @@ import numpy as np
 from argparse import ArgumentParser
 import ast
 import plot_outputs as pt
-import plots_2 as pt2
+
 parser = ArgumentParser()
 
 parser.add_argument("-S", "--SNRs", dest = "SNRs",
@@ -117,11 +117,11 @@ with open(basedir + 'all_trials_dict.txt', 'w') as outfile:
 		all_SNR2.append(chunk_SNR_list)
 		all_correct_errors.append(np.var(is_correct_list)/np.sqrt(len(is_correct_list)))
 #print(all_mismatch)
-pt.plot_pixelplot(all_SNR,all_mismatch, [0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9,10,11] ,"Number of incorrect chunks", basedir + 'mismatch_histogram.png')
+pt.plot_pixelplot(all_SNR,all_mismatch, [0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9,10] ,"Number of incorrect chunks", basedir + 'mismatch_histogram.png')
 
-pt.plot_pixelplot(all_SNR, all_posn,[1,2,3,4,5,6,7,8,9,10,11], range(np.amax(all_posn)) ,"Rank position of true intermitency.", basedir + 'posn_histogram.png')
-pt.plot_pixelplot(all_SNR, all_correct, [0,1,2],[0,1,2,3,4,5,6,7,8,9,10,11],"Proportion of correctly recovered intermittencies", basedir + 'is_correct_histogram.png')
-pt.plot_pixelplot(all_SNR, all_true_SNR, [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40],[0,1,2,3,4,5,6,7,8,9,10,11] , "Signal SNR integrated over intermittency.", basedir + 'full_SNR_histogram.png')
+pt.plot_pixelplot(all_SNR, all_posn,[1,2,3,4,5,6,7,8,9,10], range(np.amax(all_posn)) ,"Rank position of true intermitency.", basedir + 'posn_histogram.png')
+pt.plot_pixelplot(all_SNR, all_correct, [0,1,2],[0,1,2,3,4,5,6,7,8,9,10],"Proportion of correctly recovered intermittencies", basedir + 'is_correct_histogram.png')
+pt.plot_pixelplot(all_SNR, all_true_SNR, [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40],[0,1,2,3,4,5,6,7,8,9,10] , "Signal SNR integrated over intermittency.", basedir + 'full_SNR_histogram.png')
 
 # Start tupples
 S_list = []
@@ -140,7 +140,7 @@ pt.plot_scatterplot(all_mismatch, all_SNR, [-1,np.amax(all_mismatch) + 1], 'Numb
 pt.plot_scatterplot(all_posn, all_SNR, [-1,np.amax(all_posn) + 1], 'Ranked position of true intemittency', basedir + 'position_spread.png')
 pt.plot_scatterplot(all_correct, all_SNR, [-1,np.amax(all_correct) + 1], 'Proportion of correctly recovered intemittencies', basedir + 'is_correct_spread.png')
 
-SNR_list = [1,2,3,4,5,6,7,8,9,10]
+SNR_list = [1,2,3,4,5,6,7,8,9]
 
 is_correct_errors = all_correct_errors
 # var(x)/sqrt(n)
@@ -148,8 +148,8 @@ print('Errors = ' + str(is_correct_errors))
 pt.is_correct_plot(SNR_list, correctportion, is_correct_errors, basedir + 'is_correct_line.png')
 
 #list_of_percents = np.zeros([12,12])
-list_of_percents2 = np.zeros([10,10])
-list_of_proportions = np.zeros([10,10])
+list_of_percents2 = np.zeros([10,9])
+list_of_proportions = np.zeros([10,9])
 
 for i,m in enumerate(m_list):
 	total = len(m_list)
@@ -171,6 +171,4 @@ print(is_correct_perc)
 pt.stacked_bar(SNR_list, [0,1,2,3,4,5,6,7,8], list_of_percents2, is_correct_perc, basedir + 'stacked_bar_mismatch.png')
 
 pt.stacked_bar(SNR_list, [0,1,2,3,4,5,6,7,8], list_of_proportions, is_correct_perc, basedir + 'stacked_bar_proportional_mismatch.png')
-
-pt2.stacked_bar(SNR_list, [0,1,2,3,4,5,6,7,8], list_of_proportions, is_correct_perc, basedir + 'stacked_bar_proportional_mismatch.png')
 

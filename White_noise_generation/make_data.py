@@ -52,7 +52,7 @@ os.system('python ' + execdir + 'make_pars.py --directory ' + rundir + 'PULSAR' 
 #generate priors
 
 os.chdir(rundir + 'PULSAR' + str(numbers))
-os.system('python ' + execdir + 'generate_binary.py --n_chunks ' + str(n_chunks)) #Give oputrput option
+os.system('python ' + execdir + 'generate_binary.py --n_chunks ' + str(n_chunks)) #Give output option
 #generate binary
 os.system('mkdir -p ' + rundir + 'PULSAR' + str(numbers) + '/junk')
 #generate chunks of data
@@ -60,7 +60,7 @@ os.system('python ' + execdir + 'create_fake_data.py --start_time ' + start_time
 
 os.system('mkdir -p ' + rundir + 'PULSAR' + str(numbers) + '/H1/')
 os.system('mkdir -p ' + rundir + 'PULSAR' + str(numbers) + '/L1/')
-os.system('rm *_signal_only')
+os.system('mv ' + rundir + 'PULSAR' + str(numbers) + '*_signal_only')
 os.system('mv *H1_2.0 ' + rundir + 'PULSAR' + str(numbers) + '/H1')
 os.system('mv *L1_2.0 ' + rundir + 'PULSAR' + str(numbers) + '/L1')
 
@@ -69,13 +69,13 @@ os.system('python ' + execdir + 'time_stitcher.py -i ' + rundir + 'PULSAR' + str
 os.system('python ' + execdir + 'time_stitcher.py -i ' + rundir + 'PULSAR' + str(numbers) + '/L1/ -d L1 -n ' + str(n_chunks))
 
 #Clean up
-os.system('mv ' + rundir + 'PULSAR' + str(numbers) + '/H1/fine* ' + rundir + 'PULSAR' + str(numbers) + '/')
-os.system('mv ' + rundir + 'PULSAR' + str(numbers) + '/L1/fine* ' + rundir + 'PULSAR' + str(numbers) + '/')
+#os.system('mv ' + rundir + 'PULSAR' + str(numbers) + '/H1/fine* ' + rundir + 'PULSAR' + str(numbers) + '/')
+#os.system('mv ' + rundir + 'PULSAR' + str(numbers) + '/L1/fine* ' + rundir + 'PULSAR' + str(numbers) + '/')
 
-os.system('rm -r ' + rundir + 'PULSAR' + str(numbers) + '/junk/')
-os.system('rm -r ' + rundir + 'PULSAR' + str(numbers) + '/H1/')
-os.system('rm -r ' + rundir + 'PULSAR' + str(numbers) + '/L1/')
+#os.system('rm -r ' + rundir + 'PULSAR' + str(numbers) + '/junk/')
+#os.system('rm -r ' + rundir + 'PULSAR' + str(numbers) + '/H1/')
+#os.system('rm -r ' + rundir + 'PULSAR' + str(numbers) + '/L1/')
 
-os.system('python ' + execdir + 'plot_signal.py -d /scratch/spxbp1/TEST_SUITE/PULSAR' + str(numbers) + '/ -l /scratch/spxbp1/TEST_SUITE/PULSAR' + str(numbers) + '/fine_H*')
-os.system('python ' + execdir + 'plot_signal.py -d ' + rundir + 'PULSAR' + str(numbers) + '/ -l ' + rundir + 'PULSAR' + str(numbers) + '/fine_L*')
+os.system('python ' + execdir + 'plot_signal.py -d /scratch/spxbp1/TEST_SUITE/PULSAR' + str(numbers) + '/ -l /scratch/spxbp1/TEST_SUITE/PULSAR' + str(numbers) + '/fine_H* -D H1')
+os.system('python ' + execdir + 'plot_signal.py -d ' + rundir + 'PULSAR' + str(numbers) + '/ -l ' + rundir + 'PULSAR' + str(numbers) + '/fine_L* -D L1')
 

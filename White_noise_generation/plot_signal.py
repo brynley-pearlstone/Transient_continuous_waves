@@ -9,6 +9,9 @@ parser.add_argument("-l", "--data_file", dest = "data_list",
                   help = "File containing data to plot", metavar = "STRING")
 parser.add_argument("-d", "--directory", dest = "directory",
                   help = "Directory for Pulsar.", metavar = "STRING")
+parser.add_argument("-D", "--detector", dest = "detector",
+                  help = "Detector name.", metavar = "STRING")
+
 
 args = parser.parse_args()
 
@@ -41,13 +44,13 @@ plt.plot(time, RE)
 plt.ylabel("Strain (Real component)")
 plt.xlabel("GPS time")
 plt.title("Real part of strain")
-plt.savefig(str(args.directory) +  "real.png")
+plt.savefig(str(args.directory) +  str(args.detector) + "real.png")
 
 plt.plot(time, IM)
 plt.ylabel("Strain (imag component)")
 plt.xlabel("GPS time")
 plt.title("Imaginary part of strain")
-plt.savefig(str(args.directory) +  "imag.png")
+plt.savefig(str(args.directory) + str(args.detector) +  "imag.png")
 
 
 

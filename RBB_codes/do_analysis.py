@@ -24,6 +24,8 @@ if execdir[-1]!='/':
 if rundir[-1]!='/':
 	rundir = rundir + '/'
 
+os.system('python ' + execdir + 'post_samples.py -N ' + str(n_chunks) + ' -d ' + rundir + 'output/')
+
 os.system('python ' + execdir + 'read_data.py -i ' + rundir + 'output/')
 
 os.system('python ' + execdir + 'collate_evidences.py -n ' + str(n_chunks) + ' -d ' + rundir + 'output/ -o ' + rundir + 'data.txt')

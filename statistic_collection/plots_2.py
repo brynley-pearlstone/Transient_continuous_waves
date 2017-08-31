@@ -104,17 +104,17 @@ def stacked_bar(SNR_list, list_of_mismatches, list_of_percentages, is_correct_pe
 #	print("Percentages = \n")
 #	for item in percentages:
 #		print(item)
-	y_pos = np.arange(len(SNRlist)) 
+	x_pos = np.arange(len(SNRlist)) 
 	
 	f, px = plt.subplots(1,1)
 #	fig, px = plt.figure()
 	colors =['w','y','r','m','b','c','g','k','gray']
 	patch_handles = []
-	left = np.zeros(len(SNRlist)) # left alignment of data starts at zero
+	btm = np.zeros(len(SNRlist)) # left alignment of data starts at zero
 	for i, d in enumerate(data):
-		patch_handles.append(plt.barh(y_pos, d, color=colors[i%len(colors)], align='center', left=left))
+		patch_handles.append(plt.barh(d, x_pos, color=colors[i%len(colors)], align='center', bottom=btm))
 	# accumulate the left-hand offsets
-		left += d
+		btm += d
 
 	# go through all of the bar segments and annotate
 	for j in xrange(len(patch_handles)):
@@ -126,58 +126,11 @@ def stacked_bar(SNR_list, list_of_mismatches, list_of_percentages, is_correct_pe
 #				px.text(x,y, "%f%%" % (percentages[i,j]), ha='center')
 
 #	a=px.get_xticks().tolist()
-	px.set_yticks(y_pos)
-	px.set_yticklabels(SNRlist)
-	px.set_xlabel('Cumulative percentage of mismatched intermittency chunks')
-	px.set_xlim([0,100])	
-	px.plot(is_correct_perc, y_pos, '--', linewidth=6)
+	px.set_xticks(x_pos)
+	px.set_xticklabels(SNRlist)
+	px.set_ylabel('Cumulative percentage of mismatched intermittency chunks')
+	px.set_ylim([0,100])	
+	px.plot(x_pos, is_correct_perc,  '--', linewidth=6)
 
 	f.savefig(output_file)
-
-#	import numpy as np
-#	import matplotlib.pyplot as plt
-#	# some labels for each row
-#	SNRlist = []
-#	for SNR in SNR_list:
-#		SNRlist.append(str(SNR))
-#	r = len(SNRlist)
-#	# how many data points overall (average of 3 per person)
-#	#n = r * 3
-#	# which person does each segment belong to?
-#	#rows = np.random.randint(0, r, (n,))
-#
-#	# how wide is the segment?
-#	widths = np.random.randint(3,12, n,)
-#
-#	# what label to put on the segment
-#	#labels = xrange(n)
-#	colors ='roygbmk'
-#	patch_handles = []
-#	ax = plt.figure()
-#	left = np.zeros(r,)
-#	row_counts = np.zeros(r,)
-#	for (r, w, l) in zip(rows, widths, labels):
-#		print r, w, l
-#		patch_handles.append(ax.barh(r, w, align='center', left=left[r],
-#			color=colors[int(row_counts[r]) % len(colors)]))
-#		left[r] += w
-#		row_counts[r] += 1
-#		# we know there is only one patch but could enumerate if expanded
-#		patch = patch_handles[-1][0] 
-#		bl = patch.get_xy()
-#		x = 0.5*patch.get_width() + bl[0]
-#		y = 0.5*patch.get_height() + bl[1]
-##		ax.text(x, y, "%d%%" % (l), ha='center',va='center')
-#	y_pos = np.arange(8)
-#	ax.set_yticks(y_pos)
-#	ax.set_yticklabels(people)
-#	ax.set_xlabel('Distance')
-#
-#
-
-
-
-
-
-
 

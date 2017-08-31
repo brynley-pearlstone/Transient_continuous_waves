@@ -8,7 +8,7 @@ parser = ArgumentParser()
 parser.add_argument("-d", "--directory", dest = "directory",
                   help = "Location to put .par file", metavar = "STRING")
 parser.add_argument("-n", "--Number", dest = "number",
-                  help = "Number of .par files to generate", metavar = "INT")
+                  help = "Number of pulsar that this par file describes.", metavar = "INT")
 
 
 args = parser.parse_args()
@@ -106,4 +106,24 @@ prior_upper = [1e-20, 3.141592653589793, 1.5707963267948966, 1]
 for place,name in enumerate(prior_head):
 	prior_out.write(name + '\t' + prior_form + '\t' + str(prior_lower[place]) + '\t' + str(prior_upper[place]) + '\n')
 prior_out.close()
+
+null_list = []
+null_list.append(pulsar_dict[header[0]])
+null_list.append(pulsar_dict[header[1]])
+null_list.append(pulsar_dict[header[2]])
+null_list.append(pulsar_dict[header[3]])
+null_list.append(pulsar_dict[header[4]])
+null_list.append(pulsar_dict[header[5]])
+null_list.append(pulsar_dict[header[6]])
+null_list.append(pulsar_dict[header[7]])
+null_list.append(0)
+null_list.append(pulsar_dict[header[9]])
+null_list.append(pulsar_dict[header[10]])
+null_list.append(pulsar_dict[header[11]])
+
+
+nullparfile = directory + pulsar_name + '_null.par'
+with open(nullparfile, 'w+') as f:
+	for posn, entry in enumerate(header):
+	     	f.write(entry + '\t' + str(null_list[posn]) + '\n')
 

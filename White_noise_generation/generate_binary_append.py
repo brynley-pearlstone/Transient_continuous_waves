@@ -50,11 +50,11 @@ elif len(bina)!=n_chunks:
 else:
 	binary = bina
 
-outfile = open('input_binary.txt','w+')
+outfile = open('input_binary.txt','a')
 
-outfile.seek(0)
+#outfile.seek(0)
 
-outfile.write('Input binary:\n' + str(binary) + '\n')
+outfile.write(str(binary) + '\n')
 
 outfile.close()
 
