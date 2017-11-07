@@ -56,7 +56,7 @@ outtext.seek(0)
 for i in range(n_chunks):
 	for j in range(n_chunks + 1):
 		if j>i:
-			args_to_write = '--detectors H1,L1 --par-file ' + par_path + ' --input-files ' + directory + 'H1/H1-chunk_' + str(i) +'_to_' + str(j) + '.txt,' + directory + 'L1/L1-chunk_' + str(i) +'_to_' + str(j) + '.txt --outfile ' + directory + 'chunk_' + str(i) +'_to_' + str(j) + '.hdf --Nlive ' + str(args.nlive) + ' --Nmcmcinitial 0 --tolerance 0.1 --prior-file ' + prior_path + '\n'
+			args_to_write = '--detectors H1,L1 --oldChunks --par-file ' + par_path + ' --input-files ' + directory + 'H1/H1-chunk_' + str(i) +'_to_' + str(j) + '.txt,' + directory + 'L1/L1-chunk_' + str(i) +'_to_' + str(j) + '.txt --outfile ' + directory + 'chunk_' + str(i) +'_to_' + str(j) + '.hdf --Nlive ' + str(args.nlive) + ' --Nmcmcinitial 0 --tolerance 0.1 --prior-file ' + prior_path + '\n'
 		        print(args_to_write)
 			outtext.write(args_to_write)
 # THIS is the part that wants to be paralellised.  Pull it out of the loop, find a way to parse the arguments

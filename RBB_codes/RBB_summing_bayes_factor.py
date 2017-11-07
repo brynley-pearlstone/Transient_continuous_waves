@@ -49,7 +49,7 @@ args = parser.parse_args()
 
 infile = args.infile
 if not os.path.exists(infile):
-        print('Please double check input file')
+	print('Please double check input file')
 
 #CP_prior = args.CP_prior
 output = args.outpath 
@@ -121,7 +121,32 @@ for itt_number in range(len(bin_array)):
 	binary_struc =  binary_structure( binary_number )
 	n_changepoints.append(binary_struc["n_changepoints"])
 	data = all_data[itt_number]
-			
+	#Apply a threshold cut in the chunks of data which contain signal
+	#In order to count towards the total, they must have a sufficiently high signal evidence.
+	# Signal_evidences is a list of evidences for chunks that the current binary model assume to contain a signal.
+	# We want to only include those with the same value of h
+	# But these terms are independant of h because each of these terms is an evidence marginalised over h
+	# The way that we cut out low h is either
+		# 1 Change the priors on h so that they no longer include 0. This is easy to do but means that we would have to re-run sims to get new results
+		# 2 Require a second pass, ie get h posteriors out of an initial run, incorporate these into the RBB analysis as metadata for each block and use this as a limit. This only means running LPPEN once and RBB once, but means writing a bit of new code.
+	needed_bayes_factors = []
+	needed_positions = []
+        total_signal_evidence = 0
+	for place,bit in enumerate(binary_number):
+		if bit == 1:
+			needed_bayes_factors.append(data[place])
+			needed_positions.append(place)
+			total_signal_evidence += data[place]
+	# Impose a threshold cut. We use half of the mean value of the strain - this is quite low. Anything above this value will pass.
+#	mean_factor = total_signal_evidence / len(needed_positions)
+	# Set the bayes factors in these cases where the bayes factor is less than the mean to 0, so they do not contribute to the sum	
+	if len(needed_positions) != 0:
+		mean_factor = total_signal_evidence / len(needed_positions)
+		for place,item in enumerate(needed_bayes_factors):
+			if item < 0.5*mean_factor:
+				data[needed_positions[place]] = 0
+
+ 			
 	# Sum the evidences for signal and the evidences for noise as appropriate in each block
 	l_likelihood[config] = sum(data)
 	l_norm.append(np.log((1/(len(binary_number)))*(nCr(len(data)-1,n_changepoints[config]))))
@@ -135,7 +160,7 @@ evidence_index = [i[0] for i in sorted(enumerate(l_evidence), key=lambda x:x[1])
 sorted_n_CP = [n_changepoints[i] for i in evidence_index]
 #print(l_evidence)
 
-#l_odds_on_vs_off = l_odds[-1] - l_odds[0]
+l_odds_on_vs_off = l_odds[-1] - l_odds[0]
 #odds_on_v_off = np.exp(l_odds_on_vs_off)
 # Define the odds of one config vs all other configs
 # Denominator is sum of all that are not that index
@@ -225,7 +250,7 @@ o.write(str(true_binary_position) + '\n\n')
 
 results_dict = []
 for i in range(len(sorted_odds_all)):
-	results_dict.append({"sorted_binaries":sorted_binaries[i], "sortd_posteriors":np.exp(sorted_posteriors[i]), "sorted_odds_all":np.exp(sorted_odds_all[i]), "sorted_odds_v_null":np.exp(sorted_odds[i]), "sorted_evidence":sorted_evidence[i] , "sorted_priors":np.exp(sorted_priors[i]), "data used":sorted_data[i]})
+	results_dict.append({"sorted_binaries":sorted_binaries[i], "sortd_posteriors":np.exp(sorted_posteriors[i]), "sorted_odds_all":np.exp(sorted_odds_all[i]), "sorted_odds_v_null":np.exp(sorted_odds[i]), "sorted_evidence":sorted_evidence[i] , "sorted_priors":np.exp(sorted_priors[i]), "data used":sorted_data[i], "Log odds of on-vs-off":l_odds_on_vs_off})
 
 for i in range(len(results_dict)):
 	#print(str(results_dict[i]) + "\n")

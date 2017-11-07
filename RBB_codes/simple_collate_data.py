@@ -1,8 +1,4 @@
-#Write a code to collaate the relevant information for data
-
-#Parse number of chunks
-
-#Compute binary number
+#Write a code to collate the relevant information for data
 
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -32,15 +28,13 @@ for itt,number in enumerate(numbers):
 	
 # Pad binary numbers
 
-#bin_length = len(binary_number[-1])
 binary_numbers = []
 for binary in binary_number:
 	while len(binary) < n_chunks+1: #len(binary_number[-1]):
 		binary.insert(0,0) #` = '0' + binary
 	binary_numbers.append(binary)
 	
-print(binary_numbers)
-#Import the relevant data for each configuratiion of chunks
+# Import the relevant data for each configuratiion of chunks
 
 input_directory = str(args.input_directory)
 
@@ -82,8 +76,6 @@ def get_bayes_factor(directory, block_start, block_end, atom_value):
                 quit(0)
         return chunks_value
 
-
-
 def get_posterior(directory, block_start, block_end):
         p = directory + '/posteriors/chunk_' + str(block_start) + '-' + str(block_end) + '_pos.txt'
         pos_file = open(p, 'r')
@@ -103,46 +95,17 @@ for bin_itt,bin_num in enumerate(binary_number):
 	posterior_data = []
 	bayes_factor_data = []
 	print(str(bin_num) + '\n')
-	index = 0
-	while index < len(bin_num)-1:
+	for index in range(n_chunks):
 	#for bin_posn, atom in enumerate(bin_num):
-		if bin_num[index] - bin_num[index+1] == 0:
-#			print(index)
-			running_index = index + 1
-			while running_index < n_chunks+1:
-				#print(running_index)
-				if bin_num[index] - bin_num[running_index] == 0:
-					index_adder = running_index
-					running_index += 1	
-					#index_adder = running_index
-				else:
-					running_index = n_chunks + 100
-			chunk_start = index
-			#This defines a block
-			if index_adder == n_chunks:
-				chunk_end = index_adder #index + block_length[int(block_numbers[index])-1]
-			else:
-				chunk_end = index_adder + 1
-			chunk_value = bin_num[index]
-			#print(chunk_end)
-			data_value = assign_data_value(input_directory, chunk_start, chunk_end, chunk_value)
-			post_value = get_posterior(input_directory, chunk_start, chunk_end)
-			bayes_factor_value = get_bayes_factor(input_directory, chunk_start, chunk_end, chunk_value)
+		if bin_num[index]==1:
+			print(index)
+			data_value = assign_data_value(input_directory, index, index + 1, 1)
+			post_value = get_posterior(input_directory, index, index + 1)
+			bayes_factor_value = get_bayes_factor(input_directory, index, index + 1, 1)
 			data.append(float(data_value[:-1]))
 			posterior_data.append(float(post_value))
 			bayes_factor_data.append(float(bayes_factor_value))
-			while index+1 < chunk_end:
-				index +=1
-		#		chunk_start = index
-                #        	chunk_end = index + 1
-				#post_value = get_posterior(input_directory, chunk_start+1, chunk_end+1)
-				posterior_data.append(float(post_value))
-				data.append(0)
-				bayes_factor_data.append(0)
-			index += 1
-			#print(index)
-
-		elif bin_num[index+1] - bin_num[index] == 1:
+		elif bin_num[index] == 0:
 			chunk_start = index
 			chunk_end = index + 1
 			chunk_value = 0
@@ -152,24 +115,9 @@ for bin_itt,bin_num in enumerate(binary_number):
 			data.append(float(data_value[:-1]))
 			posterior_data.append(float(post_value))
 			bayes_factor_data.append(float(bayes_factor_value))
-			index +=1
-		elif bin_num[index+1] - bin_num[index] == -1:
-			chunk_start = index
-                        chunk_end = index + 1
-                        chunk_value = 1
-			data_value = assign_data_value(input_directory, chunk_start, chunk_end, chunk_value)
-                        post_value = get_posterior(input_directory, chunk_start, chunk_end)
-                        bayes_factor_value = get_bayes_factor(input_directory, chunk_start, chunk_end, chunk_value)
-                        data.append(float(data_value[:-1]))
-			posterior_data.append(float(post_value))
-			bayes_factor_data.append(float(bayes_factor_value))
-                        index +=1
 		else:
 			print("I'm sorry Dave, I can't do that for you.")
 			quit(0)
-		
-		# call the data grabber
-		#data_value = assign_data_value(chunk_start, chunk_end, atom_value)
 	data_bins.append(data)
 	bayes_bins.append(bayes_factor_data)
 	h_bins.append(posterior_data)
@@ -187,24 +135,19 @@ bf_out = ''
 for part in bf_outpath[:-1]:
 	bf_out = bf_out + part + '/'
 
-bf_out = bf_out + 'bayes_factor_data.txt'
+bf_out = bf_out + 'simple_bayes_factor_data.txt'
 
 with open(bf_out, 'w') as b:
 	for num,item in enumerate(bayes_bins):
 		b.write(str(item) + '\n')
-		print('Bayes factor for binary number are: ' + str(item))
 
 h_outpath = output.split('/')
 h_out = ''
 for part in h_outpath[:-1]:
         h_out = h_out + part + '/'
 
-h_out = h_out + 'h_posterior_data.txt'
+h_out = h_out + 'simple_h_posterior_data.txt'
 with open(h_out, 'w') as h:
         for num,item in enumerate(h_bins):
                 h.write(str(item) + '\n')
-                print('Posterior samples for this binary number are: ' + str(item))
-
-
-
 

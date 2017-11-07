@@ -11,6 +11,9 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--rundir", dest="rundir", required=True, help="Set the run directory for outputs")
 parser.add_argument("-R", "--run_RBB", dest="run_RBB", required=True, help="Set the test run script location")
+parser.add_argument("-B", "--run_RBB_bayes_cut", dest="run_RBB_b_cut", required=True, help="Set the test run script location")
+parser.add_argument("-P", "--run_RBB_posterior_cut", dest="run_RBB_p_cut", required=True, help="Set the test run script location")
+
 #parser.add_argument("-p", "--exec-path", dest="execpath", required=True, help="Set the path to the required executables")
 parser.add_argument("-N", "--N-sims", dest = "N_sims", default=100, type=int, help="Set the number of parallel trials to run")
 #parser.add_argument("-C", "--n_chunks", dest = "n_chunks", help = "Number of chunks to generate", metavar = "INT")

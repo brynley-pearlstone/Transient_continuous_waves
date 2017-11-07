@@ -1,0 +1,37 @@
+usage: read_statisics.py [-h] [-t STRING] [-d STRING] [-b STRING] [-p STRING]
+                         [-s STRING] [-o STRING] [-B STRING] [-P STRING]
+                         [-V STRING] [-n STRING] [-S FLOAT]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t STRING, --true_binary STRING
+                        Path to file containing the true binary number used.
+  -d STRING, --output_dir STRING
+                        Path to file containing the output directory, and
+                        various other outputs. (/analysis_out)
+  -b STRING, --bayescut_output_dir STRING
+                        Path to file containing the output directory, and
+                        various other outputs for the bayescut data.
+  -p STRING, --posterior_output_dir STRING
+                        Path to file containing the output directory, and
+                        various other outputs for the posterior cut data.
+  -s STRING, --simple_ver_output_dir STRING
+                        Path to file containing the output directory, and
+                        various other outputs for the simple version of RBB
+                        data.
+  -o STRING, --output STRING
+                        Path to file where the average mismatch for every run
+                        is written.
+  -B STRING, --Bayes_output STRING
+                        Path to file where the average mismatch for every
+                        bayescut run is written.
+  -P STRING, --post_output STRING
+                        Path to file where the average mismatch for every
+                        posterior-cut run is written.
+  -V STRING, --simple_output STRING
+                        Path to file where the average mismatch for every
+                        simple run is written.
+  -n STRING, --Pulsar_number STRING
+                        NUmber of pulsar that corresponds to the results.
+  -S FLOAT, --SNR FLOAT
+                        SNR of signal injected

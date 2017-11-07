@@ -121,7 +121,6 @@ for itt_number in range(len(bin_array)):
 	binary_struc =  binary_structure( binary_number )
 	n_changepoints.append(binary_struc["n_changepoints"])
 	data = all_data[itt_number]
-			
 	# Sum the evidences for signal and the evidences for noise as appropriate in each block
 	l_likelihood[config] = sum(data)
 	l_norm.append(np.log((1/(len(binary_number)))*(nCr(len(data)-1,n_changepoints[config]))))
@@ -135,7 +134,7 @@ evidence_index = [i[0] for i in sorted(enumerate(l_evidence), key=lambda x:x[1])
 sorted_n_CP = [n_changepoints[i] for i in evidence_index]
 #print(l_evidence)
 
-#l_odds_on_vs_off = l_odds[-1] - l_odds[0]
+l_odds_on_vs_off = l_odds[-1] - l_odds[0]
 #odds_on_v_off = np.exp(l_odds_on_vs_off)
 # Define the odds of one config vs all other configs
 # Denominator is sum of all that are not that index
@@ -204,14 +203,10 @@ for numb,binary_list in enumerate(sorted_binaries):
 		run_sum = 0
 		#print(binary_list)
 		for entry in range(len(true_binary)):
-			#print(entry)
-			#print(true_binary[entry])
-			#print(binary_list[entry])
 			run_sum = run_sum + (int(true_binary[entry]) - int(binary_list[entry]))
 		if run_sum == 0:
 			true_binary_position = 2**len(true_binary) - (numb + 1)
 			#print(true_binary_position)
-	
 
 sanity_check = [odds_index[i] - sort_index[i] for i in range(len(sort_index))]
 
@@ -225,7 +220,7 @@ o.write(str(true_binary_position) + '\n\n')
 
 results_dict = []
 for i in range(len(sorted_odds_all)):
-	results_dict.append({"sorted_binaries":sorted_binaries[i], "sortd_posteriors":np.exp(sorted_posteriors[i]), "sorted_odds_all":np.exp(sorted_odds_all[i]), "sorted_odds_v_null":np.exp(sorted_odds[i]), "sorted_evidence":sorted_evidence[i] , "sorted_priors":np.exp(sorted_priors[i]), "data used":sorted_data[i]})
+	results_dict.append({"sorted_binaries":sorted_binaries[i], "sortd_posteriors":np.exp(sorted_posteriors[i]), "sorted_odds_all":np.exp(sorted_odds_all[i]), "sorted_odds_v_null":np.exp(sorted_odds[i]), "sorted_evidence":sorted_evidence[i] , "sorted_priors":np.exp(sorted_priors[i]), "data used":sorted_data[i], "Log dds of on-vs-off":l_odds_on_vs_off})
 
 for i in range(len(results_dict)):
 	#print(str(results_dict[i]) + "\n")
