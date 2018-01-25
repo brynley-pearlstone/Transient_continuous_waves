@@ -62,7 +62,7 @@ def barcode_plot(sorted_binaries, sorted_post, data, true_binary_position, outpu
 	plot_data(data, output)
 
 	ax3 = plt.subplot(gs[1:,:-1])
-	y = plt.imshow(scaled_binaries, cmap = 'gray', interpolation='none')
+	y = plt.imshow(scaled_binaries, cmap = 'gray_r', interpolation='none')
 	plt.xlabel('Chunk')
 	plt.ylabel('Rank')
 	cx = plt.gca();

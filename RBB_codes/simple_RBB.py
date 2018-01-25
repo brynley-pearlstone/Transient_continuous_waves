@@ -130,6 +130,12 @@ for itt_number in range(len(bin_array)):
 l_odds = l_evidence - l_evidence[0]
 
 sorted_evidence = sorted(l_evidence)
+# Using the formula log_b(X) = log_a(X)/log_a(b)
+sorted_l10_evidence = []
+for item in sorted_evidence:
+	l10_item = item / math.log(np.e,10)
+	sorted_l10_evidence.append(l10_item)
+
 evidence_index = [i[0] for i in sorted(enumerate(l_evidence), key=lambda x:x[1])]
 sorted_n_CP = [n_changepoints[i] for i in evidence_index]
 #print(l_evidence)
@@ -220,10 +226,9 @@ o.write(str(true_binary_position) + '\n\n')
 
 results_dict = []
 for i in range(len(sorted_odds_all)):
-	results_dict.append({"sorted_binaries":sorted_binaries[i], "sortd_posteriors":np.exp(sorted_posteriors[i]), "sorted_odds_all":np.exp(sorted_odds_all[i]), "sorted_odds_v_null":np.exp(sorted_odds[i]), "sorted_evidence":sorted_evidence[i] , "sorted_priors":np.exp(sorted_priors[i]), "data used":sorted_data[i], "Log dds of on-vs-off":l_odds_on_vs_off})
+	results_dict.append({"sorted_binaries":sorted_binaries[i], "sorted_posteriors":np.exp(sorted_posteriors[i]), "natural-log sorted_evidence":sorted_evidence[i], "log-10 sorted evidence":sorted_l10_evidence[i]})
 
 for i in range(len(results_dict)):
-	#print(str(results_dict[i]) + "\n")
 	o.write(str(results_dict[i]) + "\n")
 
 # Find the right data instance to plot to show data atoms
@@ -233,7 +238,7 @@ running_total = 0
 while i>0:
 	running_total += int(2**(i-1))
 	i-=2
-print("Running total = " + str(running_total))
+#print("Running total = " + str(running_total))
 
 o.close()
 odds_to_plot = sorted_odds_all[::-1]

@@ -45,7 +45,7 @@ os.system('mkdir -p ' + outdir + 'simple_version')
 
 os.system('python ' + execdir + 'simple_collate_data.py -n ' + str(n_chunks) + ' -d ' + rundir + 'output/ -o ' + outdir + '/simple_version/data.txt')
 
-os.system('python ' + execdir + 'RBB_summing_evidence.py -i ' + outdir + 'data.txt -o ' + outdir + '/analysis_out' + ' -b ' + rundir + 'input_binary.txt')
+os.system('python ' + execdir + 'RBB_summing_evidence.py -i ' + outdir + 'data.txt -o ' + outdir + 'analysis_out' + ' -b ' + rundir + 'input_binary.txt')
 
 os.system('python ' + execdir + 'RBB_summing_evidence_w_cutoff.py -i ' + outdir + 'data.txt -o ' + outdir + 'posterior_cut_out' + ' -b ' + rundir + 'input_binary.txt -p ' + outdir + 'h_posterior_data.txt')
 

@@ -85,7 +85,7 @@ def get_bayes_factor(directory, block_start, block_end, atom_value):
 
 
 def get_posterior(directory, block_start, block_end):
-        p = directory + '/posteriors/chunk_' + str(block_start) + '-' + str(block_end) + '_pos.txt'
+        p = directory + 'posteriors/chunk_' + str(block_start) + '-' + str(block_end) + '_pos.txt'
         pos_file = open(p, 'r')
         pos_lines = []
         for line in pos_file:
@@ -110,11 +110,10 @@ for bin_itt,bin_num in enumerate(binary_number):
 #			print(index)
 			running_index = index + 1
 			while running_index < n_chunks+1:
-				#print(running_index)
 				if bin_num[index] - bin_num[running_index] == 0:
 					index_adder = running_index
 					running_index += 1	
-					#index_adder = running_index
+
 				else:
 					running_index = n_chunks + 100
 			chunk_start = index
@@ -123,24 +122,21 @@ for bin_itt,bin_num in enumerate(binary_number):
 				chunk_end = index_adder #index + block_length[int(block_numbers[index])-1]
 			else:
 				chunk_end = index_adder + 1
+			# Use functions above to pick out relevant attributes: intermittency value, evidence value (for signal or noise), posterior
 			chunk_value = bin_num[index]
-			#print(chunk_end)
 			data_value = assign_data_value(input_directory, chunk_start, chunk_end, chunk_value)
 			post_value = get_posterior(input_directory, chunk_start, chunk_end)
 			bayes_factor_value = get_bayes_factor(input_directory, chunk_start, chunk_end, chunk_value)
+			# Add these values to a data list to be output as the data for RBB
 			data.append(float(data_value[:-1]))
 			posterior_data.append(float(post_value))
 			bayes_factor_data.append(float(bayes_factor_value))
 			while index+1 < chunk_end:
 				index +=1
-		#		chunk_start = index
-                #        	chunk_end = index + 1
-				#post_value = get_posterior(input_directory, chunk_start+1, chunk_end+1)
 				posterior_data.append(float(post_value))
 				data.append(0)
 				bayes_factor_data.append(0)
 			index += 1
-			#print(index)
 
 		elif bin_num[index+1] - bin_num[index] == 1:
 			chunk_start = index

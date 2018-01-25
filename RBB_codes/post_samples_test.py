@@ -10,7 +10,7 @@ parser.add_argument("-N", "--n_chunks", dest = "n_chunks",
                    help = "Number of chunks that were split into", metavar = "INT")
 
 parser.add_argument("-d", "--outdir", dest = "outdir",
-                   help = "Base directory before all of the SNR dirs get split", metavar = "STRING")
+                   help = "Output directory for a given pulsar", metavar = "STRING")
 
 #parser.add_argument("-l", "--dict_list", dest = "dict_list",
 #                   help = "List of paths from basedir each library", metavar = "LIST")
@@ -31,4 +31,6 @@ for i in range(int(args.n_chunks)):
 			with open(args.outdir + 'posteriors/chunk_' + str(i) + '-' + str(j) + '_pos.txt', 'w') as f: 
 				pos, logZs, logZn = pulsar_nest_to_posterior(args.outdir + str(i) + '_' + str(j) + '_pos_samples.hdf')
 				chunk_mean_h = np.mean(pos['H0'].samples)
-				f.write(str(chunk_mean_h))
+				chunk_stdev_h = np.std(pos['H0'].samples)
+				f.write(str(chunk_mean_h) + '\n' + str(chunk_stdev_h) + '\n')
+			
