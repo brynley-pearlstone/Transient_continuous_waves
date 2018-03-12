@@ -38,10 +38,6 @@ if execdir[-1]!= '/':
 if rundir[-1]!= '/':
         rundir = rundir + '/'
 
-
-
-
-
 retval = os.getcwd()
 
 os.system('mkdir -p ' + rundir + 'PULSAR' + str(numbers))

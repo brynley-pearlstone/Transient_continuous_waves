@@ -58,6 +58,8 @@ stats_out = ''
 for item in outlist[:-1]:
 	stats_out = stats_out + '/' + item
 
+print(stats_out)
+
 stats_out = stats_out + '/'
 
 os.system('python ' + execdir + 'read_statistics.py -t ' + rundir + 'input_binary.txt -d ' + outdir + 'analysis_out/ -b ' + outdir + 'bayes_factor_cut_out/ -p ' + outdir + 'posterior_cut_out/ -s ' + outdir + 'simple_version/ -o ' + stats_out + 'Coherent_blocks_output_collated.txt -B ' + stats_out + 'Bayescut_coherent_blocks_collates_output.txt -P ' + stats_out + 'Posterior_cut_collated_outputs.txt -V ' + stats_out + 'Incoherent_blocks_output_collated.txt -n ' + rundir[-4:-1] + ' -S ' + str(args.snr))

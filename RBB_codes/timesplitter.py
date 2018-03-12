@@ -40,8 +40,7 @@ lines = []
 with open(filename, 'r') as f:
 	for line in f:
 		lines.append(line[:-1])
-	splitline = [line.split('	') for line in lines]
-
+	splitline = [line.split() for line in lines]
 
 time_length = float(splitline[-1][0]) - float(splitline[0][0])
 chunk_time = []

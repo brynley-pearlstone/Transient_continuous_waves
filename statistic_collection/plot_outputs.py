@@ -134,6 +134,57 @@ def stacked_bar(SNR_list, list_of_mismatches, list_of_percentages, is_correct_pe
 
 	f.savefig(output_file)
 
+def h_stacked_bar(SNR_list, list_of_mismatches, list_of_percentages, is_correct_perc, output_file):
+	import numpy as np
+	import matplotlib as mpl
+	import matplotlib.pyplot as plt
+        mpl.use('Agg')
+	mpl.rcParams['agg.path.chunksize'] = 10000
+        SNRlist = []
+        for SNR in SNR_list: 
+                SNRlist.append(str(SNR))
+        segments = len(list_of_mismatches)
+#	people = ('A','B','C','D','E','F','G','H')
+#	segments = 4
+	# generate some multi-dimensional data & arbitrary labels
+	data = list_of_percentages
+	percentages = list_of_percentages
+#	print("Percentages = \n")
+#	for item in percentages:
+#		print(item)
+	x_pos = np.arange(len(SNRlist)) 
+	
+	f, px = plt.subplots(1,1)
+#	fig, px = plt.figure()
+	colors =['w','y','r','m','b','c','g','k','gray']
+	patch_handles = []
+	btm = np.zeros(len(SNRlist)) # left alignment of data starts at zero
+
+	for i, d in enumerate(data):
+		print(btm)
+		patch_handles.append(plt.bar(x_pos, d, color=colors[i%len(colors)], align='center', bottom=btm))
+	# accumulate the left-hand offsets
+		btm += d
+		
+	# go through all of the bar segments and annotate
+	for j in xrange(len(patch_handles)):
+		for i, patch in enumerate(patch_handles[j].get_children()):
+			bl = patch.get_xy()
+			x = 0.5*patch.get_width() + bl[0]
+			y = 0.5*patch.get_height() + bl[1]
+#			if patch.get_width()>10:
+#				px.text(x,y, "%f%%" % (percentages[i,j]), ha='center')
+
+#	a=px.get_xticks().tolist()
+	px.set_xticks(x_pos)
+	px.set_xticklabels(SNRlist)
+	px.set_xlabel('Chunk SNR')
+	px.set_ylabel('Cumulative percentage of mismatched intermittency chunks')
+	px.set_ylim([0,100])	
+	px.plot(x_pos, is_correct_perc,  '--', linewidth=6)
+
+	f.savefig(output_file)
+
 #	import numpy as np
 #	import matplotlib.pyplot as plt
 #	# some labels for each row

@@ -36,8 +36,9 @@ signal_length = int(args.signal_length)
 par_file = str(args.par_file)
 scale_SNR = float(args.scale_SNR)
 output_path = str(args.output_path)
-random_seed = args.random_seed
+random_seed = float(args.random_seed)
 binary_number_file = str(args.binary_number_file)
+print(random_seed)
 
 if output_path[-1] != '/':
 	output_path = output_path + '/'
@@ -70,18 +71,17 @@ for i in range(n_chunks):
         if int(binary_number[i]) == 0:
                 chunk_SNR.append(0)
 
-
+print(chunk_SNR)
 create_fake_data = []
 print(binary_number)
 for chunk in range(n_chunks):
+	random_seed = random_seed + 1	
 	print(binary_number[chunk])
 	#do
 	if binary_number[chunk] == '1':
-		print('--inject-file ' + par_file + ' --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file + ' --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0')
-		create_fake_data.append('--inject-file ' + par_file + ' --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file + ' --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0')
+		create_fake_data.append('--inject-file ' + par_file + ' --inject-only --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file + ' --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0  --randomseed ' + str(random_seed))
 	elif binary_number[chunk] == '0':
-		print('--inject-file ' + par_file[:-4] + '_null.par  --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file[:-4] + '_null.par --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0')
-		create_fake_data.append('--inject-file ' + par_file[:-4] + '_null.par  --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file[:-4] + '_null.par --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0')
+		create_fake_data.append('--inject-file ' + par_file[:-4] + '_null.par --inject-only --inject-output chunk_' + str(chunk) + '.output --fake-data H1,L1 --scale-snr ' + str(chunk_SNR[chunk]) + ' --Nlive 1024 --par-file ' +  par_file[:-4] + '_null.par --outfile ' + output_path + 'chunk_' + str(chunk) + '_out.hdf --prior-file ' + par_file[:-3] + 'priors --fake-starts ' + str(chunk_start[chunk]) + ',' + str(chunk_start[chunk]) + ' --fake-lengths ' + str(chunk_length) +  ',' + str(chunk_length) + ' --Nmcmcinitial 0  --randomseed ' + str(random_seed))
 
 	with open(output_path + "lppen_args.txt", 'a') as f:
 		f.write(create_fake_data[chunk] + '\n')

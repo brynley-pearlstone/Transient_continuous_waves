@@ -42,7 +42,8 @@ parser.add_argument("-o", "--Output_path", dest = "outpath",
                   help = "Location of the data file to be used to print output.", metavar = "STRING")
 parser.add_argument("-b", "--Test-binary", dest = "test_binary",
                   help = "Location of a file containing a hypothesis test binary number.", metavar = "STRING")
-
+parser.add_argument("-p", "--plot_number", dest = "plot_number",
+                  help = "The number of ranked intermittencies to plot as a barcode plot", metavar = "STRING", default = 25)
 
 
 args = parser.parse_args()
@@ -212,13 +213,14 @@ for numb,binary_list in enumerate(sorted_binaries):
 		run_sum = 0
 		#print(binary_list)
 		for entry in range(len(true_binary)):
-			#print(entry)
-			#print(true_binary[entry])
-			#print(binary_list[entry])
-			run_sum = run_sum + (int(true_binary[entry]) - int(binary_list[entry]))
+#			print(entry)
+#			print(true_binary[entry])
+#			print(binary_list[entry])
+			run_sum = run_sum + np.absolute(int(true_binary[entry]) - int(binary_list[entry]))		
+		print(run_sum)
 		if run_sum == 0:
 			true_binary_position = 2**len(true_binary) - (numb + 1)
-			#print(true_binary_position)
+			print(true_binary_position)
 	
 
 sanity_check = [odds_index[i] - sort_index[i] for i in range(len(sort_index))]
@@ -259,18 +261,34 @@ data_signal_atoms = []
 j = 0
 data_noise_atoms = []
 data_SNR_atoms = []
-for i in range(len(sorted_binaries[1])-1, -1, -1):
-	this_data = all_data[2**i]
-	this_noise = all_data[(((2**i+1) + (2**(i)) - 1) % len(sorted_binaries))]
-	data_signal_atoms.append(this_data[j])
-	data_noise_atoms.append(this_noise[j])
-	data_SNR_atoms.append(this_data[j]/this_noise[j])
-	j += 1
+data_atoms = []
+for index in range(len(sorted_binaries[0])):
+	data_atoms.append(0)
 
-if len(sorted_odds_all) > 50:
-	plot_functions.barcode_plot(sorted_binaries_to_plot[:49],  post_to_plot[:49], data_SNR_atoms, true_binary_position,  output)
+
+for i in range(len(sorted_binaries[0])):
+	placement = (len(sorted_binaries[0]) -1) - i
+	signal_line = all_data[2**i]
+	signal_atom = signal_line[placement]
+	top_number = 2**(len(sorted_binaries[0])) -1
+	noise_line = all_data[top_number - 2**i]
+	noise_atom = noise_line[placement]
+	atom_SNR = signal_atom - noise_atom
+	print(atom_SNR)
+	data_atoms[placement] = atom_SNR
+
+#for i in range(len(sorted_binaries[1])-1, -1, -1):
+#	this_data = all_data[2**i]
+#	this_noise = all_data[(((2**i+1) + (2**(i)) - 1) % len(sorted_binaries))]
+#	data_signal_atoms.append(this_data[j])
+#	data_noise_atoms.append(this_noise[j])
+#	data_SNR_atoms.append(this_data[j]/this_noise[j])
+#	j += 1
+plot_num = int(args.plot_number)
+if len(sorted_odds_all) > plot_num:
+	plot_functions.barcode_plot(sorted_binaries_to_plot[:plot_num],  post_to_plot[:plot_num], data_atoms, true_binary_position,  output)
 else:
-        plot_functions.barcode_plot(sorted_binaries,  sorted_odds_all, data_SNR_atoms, true_binary_position, output)
+        plot_functions.barcode_plot(sorted_binaries,  sorted_odds_all, data_atoms, true_binary_position, output)
 
 #for i in sorted_binaries:
 #print(str(i))

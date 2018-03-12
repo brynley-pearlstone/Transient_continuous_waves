@@ -49,6 +49,7 @@ Best_guess_list = []
 True_binary_list = []
 Pulsar_number_list = []
 chunk_SNR_list = []
+posterior_list = []
 
 all_mismatch = []
 all_posn = []
@@ -57,14 +58,16 @@ all_correct = []
 all_best_guess = []
 all_true_binary = []
 all_SNR = []
+all_posteriors = []
 
-all_mismatch2 = []
-all_posn2 = []
-all_correct2 = []
+#all_mismatch2 = []
+#all_posn2 = []
+#all_correct2 = []
 #all_true_SNR2 = []
-all_best_guess2 = []
-all_true_binary2 = []
-all_SNR2 = []		
+#all_best_guess2 = []
+#all_true_binary2 = []
+all_SNR2 = []
+#all_posteriors2 = []		
 correctportion = []
 all_correct_errors = []
 full_dict = []
@@ -80,42 +83,55 @@ with open(basedir + 'all_trials_dict.txt', 'w') as outfile:
 		True_binary_list = []
 		Pulsar_number_list = []
 		chunk_SNR_list = []
+		posterior_list = []
 		totalsum = 0
 		correctsum = 0
 		with open(fname) as infile:
 			for line in infile:
 				stripline = line.strip('\n')
 	        	        line_dict = ast.literal_eval(stripline)
-				#print(line_dict)
-		                mismatch_list.append(int(line_dict["Number wrong places"]))
-                		posn_list.append(int(line_dict["List position"]))
-        	        	is_correct_list.append(int(line_dict["Is_correct"]))
-		                #true_SNR_list.append(float(line_dict["Full SNR"]))
-        	        	Best_guess_list.append(line_dict["Best guess"])
-        		        True_binary_list.append(line_dict["True binary"])
-	                	Pulsar_number_list.append(line_dict["Pulsar number"])
-				chunk_SNR_list.append(int(line_dict["Chunk_SNR"]))
-				outfile.write(line)
-				full_dict.append(line)
-		                all_mismatch.append(int(line_dict["Number wrong places"]))#(mismatch_list)
-                		all_posn.append(int(line_dict["List position"]))#(posn_list)
-                		all_correct.append(int(line_dict["Is_correct"]))#(is_correct_list)
-                		#all_true_SNR.append(float(line_dict["Full SNR"]))#(true_SNR_list)
-                		all_best_guess.append(line_dict["Best guess"])#(Best_guess_list)
-                		all_true_binary.append(line_dict["True binary"])#(True_binary_list)
-                		all_SNR.append(int(line_dict["Chunk_SNR"]))#(chunk_SNR_list)
-				totalsum += 1
-				correctsum += int(line_dict["Is_correct"])
+                                if float(line_dict["Posterior"]) > 0.95:
+					#print(line_dict)
+			                mismatch_list.append(int(line_dict["Number wrong places"]))
+	                		posn_list.append(int(line_dict["List position"]))
+	        	        	is_correct_list.append(int(line_dict["Is_correct"]))
+			                #true_SNR_list.append(float(line_dict["Full SNR"]))
+	        	        	Best_guess_list.append(line_dict["Best guess"])
+	        		        True_binary_list.append(line_dict["True binary"])
+		                	Pulsar_number_list.append(line_dict["Pulsar number"])
+					chunk_SNR_list.append(int(line_dict["Chunk_SNR"]))
+					posterior_list.append(float(line_dict["Posterior"]))
+					outfile.write(line)
+					full_dict.append(line)						
+			                all_mismatch.append(int(line_dict["Number wrong places"]))#(mismatch_list)
+	                		all_posn.append(int(line_dict["List position"]))#(posn_list)
+	                		all_correct.append(int(line_dict["Is_correct"]))#(is_correct_list)
+	                		#all_true_SNR.append(float(line_dict["Full SNR"]))#(true_SNR_list)
+	                		all_best_guess.append(line_dict["Best guess"])#(Best_guess_list)
+	                		all_true_binary.append(line_dict["True binary"])#(True_binary_list)
+	                		all_SNR.append(int(line_dict["Chunk_SNR"]))#(chunk_SNR_list)
+					all_posteriors.append(float(line_dict["Posterior"]))
+					totalsum += 1
+					correctsum += int(line_dict["Is_correct"])
 			# Define list of lists
 		correctportion.append((correctsum + 0.0)/(totalsum + 0.0))
-		all_mismatch2.append(mismatch_list) 
-		all_posn2.append(posn_list) 
-		all_correct2.append(is_correct_list) 
+                with open(basedir + 'All_results.txt','w+') as o:
+	                o.write('\n\nFor SNR = ' + str(line_dict["Chunk_SNR"]) + '\n \n')
+			for line in full_dict:
+				o.write(line + '\n')
+		#all_mismatch2.append(mismatch_list) 
+		#all_posn2.append(posn_list) 
+		#all_correct2.append(is_correct_list) 
 		#all_true_SNR2.append(true_SNR_list) 
-		all_best_guess2.append(Best_guess_list) 
-		all_true_binary2.append(True_binary_list) 
+		#all_best_guess2.append(Best_guess_list) 
+		#all_true_binary2.append(True_binary_list) 
 		all_SNR2.append(chunk_SNR_list)
+		#all_posteriors2.append(float(line_dict["Posterior"]))
 		all_correct_errors.append(np.var(is_correct_list)/np.sqrt(len(is_correct_list)))
+
+
+
+
 #print(all_mismatch)
 pt.plot_pixelplot(all_SNR,all_mismatch, [0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9,10,11] ,"Number of incorrect chunks", basedir + 'mismatch_histogram.png')
 

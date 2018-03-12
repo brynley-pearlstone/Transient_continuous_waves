@@ -58,7 +58,7 @@ def decdeg2dms(dd):
 	return deg,mnt,sec
 
 dec_degree, dec_minute, dec_seconds = decdeg2dms(decdeg)
-dec_deg_int = int(dec_degree)
+dec_deg_int = int(dec_degree) - 90
 dec_minute_int = int(dec_minute)
 dec_seconds_int = int(dec_seconds)
 #DEC2 = str(random.randint(0,59))

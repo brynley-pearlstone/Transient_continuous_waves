@@ -111,11 +111,13 @@ def stacked_bar(SNR_list, list_of_mismatches, list_of_percentages, is_correct_pe
 	colors =['w','y','r','m','b','c','g','k','gray']
 	patch_handles = []
 	btm = np.zeros(len(SNRlist)) # left alignment of data starts at zero
+
 	for i, d in enumerate(data):
-		patch_handles.append(plt.barh(d, x_pos, color=colors[i%len(colors)], align='center', bottom=btm))
+		print(btm)
+		patch_handles.append(plt.bar(x_pos, d, color=colors[i%len(colors)], align='center', bottom=btm))
 	# accumulate the left-hand offsets
 		btm += d
-
+		
 	# go through all of the bar segments and annotate
 	for j in xrange(len(patch_handles)):
 		for i, patch in enumerate(patch_handles[j].get_children()):
@@ -128,6 +130,7 @@ def stacked_bar(SNR_list, list_of_mismatches, list_of_percentages, is_correct_pe
 #	a=px.get_xticks().tolist()
 	px.set_xticks(x_pos)
 	px.set_xticklabels(SNRlist)
+	px.set_xlabel('Chunk SNR')
 	px.set_ylabel('Cumulative percentage of mismatched intermittency chunks')
 	px.set_ylim([0,100])	
 	px.plot(x_pos, is_correct_perc,  '--', linewidth=6)

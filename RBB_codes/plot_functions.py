@@ -4,15 +4,19 @@ def plot_data(data, output):
         import matplotlib.pyplot as plt
 	import numpy as np
 
-        plt.bar(range(len(data)),data)
+        plt.bar(range(len(data)),data,width=1.0)
         plt.grid(True)
-        plt.title("Data")
+        plt.ylabel(r'$\log_{10}(B)$')
 	ax = plt.gca();
        
 	ax.set_xticklabels([])
-	ax.set_ylim([np.amin(data) - (0.25* ( np.amax(data)-np.amin(data))) , np.amax(data) +  (0.25 *( np.amax(data)-np.amin(data)))])
-        major_ticks = np.arange(np.floor(np.amin(data)), np.floor(np.amax(data)+2), 1)# np.floor(np.amax(data) - np.amin(data)))
+	ax.set_ylim([0 , np.amax(data) +  (0.05 *( np.amax(data)-np.amin(data)))])
+        major_ticks = np.arange(np.floor(np.amin(data)), np.floor(np.amax(data)), np.floor(np.amax(data) - np.amin(data)/2))# np.floor(np.amax(data) - np.amin(data)))
         ax.set_yticks(major_ticks, minor=False)
+	ax.axhline(linewidth=1, color='k')
+#	fig_size = ax.rcParams["figure.figsize"]
+#	fig_size[0] = width
+#	ax.rcParams["figure.figsize"] = fig_size
 	plt.show()
 	#plt.savefig(output +  "data.png")
 
@@ -23,14 +27,18 @@ def plot_odds(var, output):
         import matplotlib.pyplot as plt
 
         plt.plot(var, range(len(var),0,-1))
-        plt.xlabel("log_10 Posterior")
+        plt.xlabel(r"$\log_{10}(\mathrm{Posterior})$")
         plt.grid(True)
 	bx = plt.gca()
 	bx.set_xlim([np.amin(var)-10 , np.amax(var)+10 ])
-	major_ticks = np.arange(np.floor(np.amin(var)), np.floor(np.amax(var)+2), 0.5 * ( np.floor(np.amax(var) - np.amin(var))))
-	minor_ticks = np.arange(np.floor(np.amin(var)), np.floor(np.amax(var)+2), 0.1 * ( np.floor(np.amax(var) - np.amin(var))))
+	major_ticks = np.arange(np.floor(np.amin(var)), np.floor(np.amax(var)+2),  ( np.floor(np.amax(var) - np.amin(var))))
+	minor_ticks = np.arange(np.floor(np.amin(var)), np.floor(np.amax(var)+2), 0.5 * ( np.floor(np.amax(var) - np.amin(var))))
         bx.set_xticks(major_ticks, minor=False)
 	bx.set_xticks(minor_ticks, minor=True)
+#	bx.xaxis.set_visible(True)
+#	tick = bx.get_xticklabels()
+#       tick.set_rotation(45)
+#	bx.set_xticks(rotation=90)
         bx.grid(which = 'minor', alpha=0.5)
 	bx.set_yticklabels([])
 	plt.show()
@@ -56,15 +64,15 @@ def barcode_plot(sorted_binaries, sorted_post, data, true_binary_position, outpu
 	for [i,item] in enumerate(shifted_array):
 		scaled_binaries.append(odds_scale[i] * item)
 		scaled_binaries[i] = scaled_binaries[i] + 0.5
-	gs = gridspec.GridSpec(9,4)
-
-	ax1 = plt.subplot(gs[0, :-1])
-	plot_data(data, output)
+	gs = gridspec.GridSpec(2,2,width_ratios=[4,1],height_ratios=[1,5])
+	gs.update(wspace=0.05, hspace=0.05)
+#	ax1 = plt.subplot(gs[0, :-1])
+#	plot_data(data, output)
 
 	ax3 = plt.subplot(gs[1:,:-1])
-	y = plt.imshow(scaled_binaries, cmap = 'gray_r', interpolation='none')
-	plt.xlabel('Chunk')
-	plt.ylabel('Rank')
+	y = plt.imshow(scaled_binaries, cmap = 'gray_r', interpolation='none', aspect='auto')
+	plt.xlabel(r'$\mathrm{Chunk}$')
+	plt.ylabel(r'$\mathrm{Rank}$')
 	cx = plt.gca();
 	major_ticks = np.arange(0, len(sorted_post)+1, 5) 
 	minor_ticks = np.arange(0, len(sorted_post), 1)                                               
@@ -74,7 +82,9 @@ def barcode_plot(sorted_binaries, sorted_post, data, true_binary_position, outpu
         cx.set_yticklabels(major_ticks)
 	cx.set_xticks(np.arange(0, len(sorted_binaries[1]), 1))
        	cx.set_xticklabels(np.arange(1, len(sorted_binaries[1])+1, 1))
-	cx.set_aspect(1.0/cx.get_data_ratio())
+#	cx.set_aspect(1.0/cx.get_data_ratio())
+#	fig_size = cx.rcParams["figure.figsize"]
+#	fig_width = fig_size[0]
 	for i in range(len(sorted_post)):
 		cx.axhline(i+0.5, linestyle='-', color='k')
         for j in range(len(sorted_binaries[1])):
@@ -87,8 +97,11 @@ def barcode_plot(sorted_binaries, sorted_post, data, true_binary_position, outpu
 		cx.axvline(-0.5, linestyle='-', color='r')
 	cx.grid(which='min r')                               
 
+        ax1 = plt.subplot(gs[0, :-1])
+        plot_data(data, output)
+
 	ax4 = plt.subplot(gs[1:, -1])
 	plot_odds(sorted_post, output)
-
+	plt.bbox_inches='tight'
 	plt.savefig(output + 'barcode.png')
 
