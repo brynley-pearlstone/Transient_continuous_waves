@@ -15,7 +15,8 @@ parser.add_argument("-S", "--SNR", dest = "snr",
                    help = "SNR of fake data analysed", metavar = "STR")
 parser.add_argument("-o", "--outdir", dest = "outdir",
                    help = "Location for theoutput of each run", metavar = "STR")
-
+parser.add_argument("-C", "--collated_stats_out", dest = "stats_dir",
+                   help = "Location and filename for the data from each run to be output", metavar = "STR")
 
 args = parser.parse_args()
 
@@ -23,6 +24,7 @@ n_chunks = int(args.n_chunks)
 rundir = str(args.rundir)
 execdir = str(args.execdir)
 outdir = str(args.outdir)
+statsdir = str(args.stats_dir)
 
 if execdir[-1]!='/':
 	execdir = execdir + '/'
@@ -41,36 +43,27 @@ os.system('python ' + execdir + 'read_data.py -i ' + rundir + 'output/')
 
 os.system('python ' + execdir + 'collate_evidences.py -n ' + str(n_chunks) + ' -d ' + rundir + 'output/ -o ' + outdir + 'data.txt')
 
-os.system('mkdir -p ' + outdir + 'simple_version')
+#os.system('mkdir -p ' + outdir + 'simple_version')
 
-os.system('python ' + execdir + 'simple_collate_data.py -n ' + str(n_chunks) + ' -d ' + rundir + 'output/ -o ' + outdir + '/simple_version/data.txt')
+#os.system('python ' + execdir + 'simple_collate_data.py -n ' + str(n_chunks) + ' -d ' + rundir + 'output/ -o ' + outdir + '/simple_version/data.txt')
 
 os.system('python ' + execdir + 'RBB_summing_evidence.py -i ' + outdir + 'data.txt -o ' + outdir + 'analysis_out' + ' -b ' + rundir + 'input_binary.txt')
 
-os.system('python ' + execdir + 'RBB_summing_evidence_w_cutoff.py -i ' + outdir + 'data.txt -o ' + outdir + 'posterior_cut_out' + ' -b ' + rundir + 'input_binary.txt -p ' + outdir + 'h_posterior_data.txt')
+#os.system('python ' + execdir + 'RBB_summing_evidence_w_cutoff.py -i ' + outdir + 'data.txt -o ' + outdir + 'posterior_cut_out' + ' -b ' + rundir + 'input_binary.txt -p ' + outdir + 'h_posterior_data.txt')
 
-os.system('python ' + execdir + 'RBB_summing_bayes_factor.py -i ' + outdir + 'bayes_factor_data.txt -o ' + outdir + 'bayes_factor_cut_out' + ' -b ' + rundir + 'input_binary.txt')
+#os.system('python ' + execdir + 'RBB_summing_bayes_factor.py -i ' + outdir + 'bayes_factor_data.txt -o ' + outdir + 'bayes_factor_cut_out' + ' -b ' + rundir + 'input_binary.txt')
 
-os.system('python ' + execdir + 'simple_RBB.py -i ' + outdir + 'simple_version/data.txt -o ' + outdir + 'simple_version' + ' -b ' + rundir + 'input_binary.txt')
+#os.system('python ' + execdir + 'simple_RBB.py -i ' + outdir + 'simple_version/data.txt -o ' + outdir + 'simple_version' + ' -b ' + rundir + 'input_binary.txt')
 
-outlist = outdir.split('/')
-stats_out = ''
-for item in outlist[:-1]:
-	stats_out = stats_out + '/' + item
+#utlist = outdir.split('/')
+#tats_out = ''
+#or item in outlist[:-1]:
+#stats_out = stats_out + '/' + item
 
-print(stats_out)
+#rint(stats_out)
+#tats_out = stats_out + '/Coherent_blocks_output_collated.txt'
 
-stats_out = stats_out + '/'
+os.system('python ' + execdir + 'read_statistics.py -t ' + rundir + 'input_binary.txt -s ' + outdir + 'analysis_out/sorted_binaries.txt -d ' + outdir + 'analysis_out/output.txt -o ' + statsdir + ' -n ' + rundir[-4:-1] + ' -S ' + str(args.snr))
 
-os.system('python ' + execdir + 'read_statistics.py -t ' + rundir + 'input_binary.txt -d ' + outdir + 'analysis_out/ -b ' + outdir + 'bayes_factor_cut_out/ -p ' + outdir + 'posterior_cut_out/ -s ' + outdir + 'simple_version/ -o ' + stats_out + 'Coherent_blocks_output_collated.txt -B ' + stats_out + 'Bayescut_coherent_blocks_collates_output.txt -P ' + stats_out + 'Posterior_cut_collated_outputs.txt -V ' + stats_out + 'Incoherent_blocks_output_collated.txt -n ' + rundir[-4:-1] + ' -S ' + str(args.snr))
-
-#Step 4:
-#Translate from HDF5 to txt
-#       using read_all.py
-#Step 5:
-#Collate into blocks of chunks with correct values
-#       using collate_data.py
-#Step 6:
-#Compute RBB
-#       using RBB.py
+#os.system('python ' + execdir + 'read_statistics.py -t ' + rundir + 'input_binary.txt -d ' + outdir + 'analysis_out/ -b ' + outdir + 'bayes_factor_cut_out/ -p ' + outdir + 'posterior_cut_out/ -s ' + outdir + 'simple_version/ -o ' + stats_out + 'Coherent_blocks_output_collated.txt -B ' + stats_out + 'Bayescut_coherent_blocks_collates_output.txt -P ' + stats_out + 'Posterior_cut_collated_outputs.txt -V ' + stats_out + 'Incoherent_blocks_output_collated.txt -n ' + rundir[-4:-1] + ' -S ' + str(args.snr))
 

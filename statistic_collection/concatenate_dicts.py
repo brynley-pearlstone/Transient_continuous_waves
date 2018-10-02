@@ -49,6 +49,7 @@ Best_guess_list = []
 True_binary_list = []
 Pulsar_number_list = []
 chunk_SNR_list = []
+posterior_list = []
 
 all_mismatch = []
 all_posn = []
@@ -57,6 +58,7 @@ all_correct = []
 all_best_guess = []
 all_true_binary = []
 all_SNR = []
+all_posterior = []
 
 all_mismatch2 = []
 all_posn2 = []
@@ -64,10 +66,12 @@ all_correct2 = []
 #all_true_SNR2 = []
 all_best_guess2 = []
 all_true_binary2 = []
-all_SNR2 = []		
+all_SNR2 = []	
+all_posteriors2	= []
 correctportion = []
 all_correct_errors = []
 full_dict = []
+
 with open(basedir + 'all_trials_dict.txt', 'w') as outfile:
 	for fname in full_dict_path:
 		mismatch_list = []
@@ -95,6 +99,7 @@ with open(basedir + 'all_trials_dict.txt', 'w') as outfile:
         		        True_binary_list.append(line_dict["True binary"])
 	                	Pulsar_number_list.append(line_dict["Pulsar number"])
 				chunk_SNR_list.append(int(line_dict["Chunk_SNR"]))
+				posterior_list.append(int(line_dict["Posterior"]))
 				outfile.write(line)
 				full_dict.append(line)
 		                all_mismatch.append(int(line_dict["Number wrong places"]))#(mismatch_list)
@@ -104,6 +109,7 @@ with open(basedir + 'all_trials_dict.txt', 'w') as outfile:
                 		all_best_guess.append(line_dict["Best guess"])#(Best_guess_list)
                 		all_true_binary.append(line_dict["True binary"])#(True_binary_list)
                 		all_SNR.append(int(line_dict["Chunk_SNR"]))#(chunk_SNR_list)
+				all_posterior.append(line_dict["Posterior"]) # Posterior probability of best guess
 				totalsum += 1
 				correctsum += int(line_dict["Is_correct"])
 			# Define list of lists
@@ -115,6 +121,7 @@ with open(basedir + 'all_trials_dict.txt', 'w') as outfile:
 		all_best_guess2.append(Best_guess_list) 
 		all_true_binary2.append(True_binary_list) 
 		all_SNR2.append(chunk_SNR_list)
+		all_posteriors2.append(posterior_list)
 		all_correct_errors.append(np.var(is_correct_list)/np.sqrt(len(is_correct_list)))
 #print(all_mismatch)
 pt.plot_pixelplot(all_SNR,all_mismatch, [0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9,10,11] ,"Number of incorrect chunks", basedir + 'mismatch_histogram.png')
@@ -173,4 +180,32 @@ is_correct_perc = [i * 100 for i in correctportion]
 pt.h_stacked_bar(SNR_list, [0,1,2,3,4,5,6,7,8], list_of_proportions, is_correct_perc, basedir + 'incoherent_stacked_bar_proportional_mismatch.png')
 
 #pt2.stacked_bar(SNR_list, [0,1,2,3,4,5,6,7,8], list_of_proportions, is_correct_perc, basedir + 'stacked_bar_proportional_mismatch_horiz.png')
+
+is_correct_SNR = []
+is_wrong_SNR = []
+is_correct_posterior = []
+is_wrong_posterior = []
+is_correct_binary = []
+is_wrong_binary = []
+is_correct_position = []
+is_wrong_position = []
+
+for num,entry in enumerate(all_correct):
+	if entry ==1:
+		is_correct_SNR.append(all_SNR[num])
+		is_correct_posterior.append(all_posterior[num])
+		is_correct_binary.append(all_true_binary[num])
+	else:
+		is_wrong_SNR.append(all_SNR[num])		
+                is_wrong_posterior.append(all_posterior[num]) 
+                is_wrong_position.append(all_position[num]) 
+                is_wrong_binary.append(all_true_binary[num]) 
+
+# Want to plot the binaries in like a contrast for most recurring correctly and incorrectly guessed bits?
+
+# Want to plot the spread of posteriors by cSNR
+
+pt.plot(is_correct_SNR, is_correct_posterior, 'bx')
+pt.plot(is_wrong_SNR, is_wrong_posterior, 'r+', basedir + 'posterior_spread.png')
+
 
